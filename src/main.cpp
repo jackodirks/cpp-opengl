@@ -1,11 +1,9 @@
 #include <iostream>
 
-#include "print.h"
 #include "matrix4.hpp"
 
 int main() {
     std::cout << "Hello World!" << std::endl;
-    cTestPrint();
     Matrix4 mat;
     mat.print();
     std::cout << std::endl;
