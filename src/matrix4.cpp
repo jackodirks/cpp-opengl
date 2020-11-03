@@ -57,7 +57,6 @@ Matrix4 Matrix4::operator*(const Matrix4 &matrix4)
     return Matrix4(res);
 }
 
-
 Matrix4 Matrix4::operator+(const Matrix4 &matrix4)
 {
     std::array<float, 16> matCopy = this->mat;
@@ -74,4 +73,10 @@ Matrix4 Matrix4::operator-(const Matrix4 &matrix4)
         matCopy[i] -= matrix4.mat[i];
     }
     return Matrix4(matCopy);
+}
+
+
+const float* Matrix4::data(void) const noexcept
+{
+    return this->mat.data();
 }

@@ -15,6 +15,7 @@ class Matrix4 {
         Matrix4 operator*(const Matrix4 &matrix4);
         Matrix4 operator+(const Matrix4 &matrix4);
         Matrix4 operator-(const Matrix4 &matrix4);
+        const float* data(void) const noexcept;
 };
 
 #endif //MATRIX4_HPP
