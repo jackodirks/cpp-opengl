@@ -7,7 +7,7 @@ INC= -Iinc/ -isystem/usr/include/freetype2
 LIBDIR= 
 COMMONFLAGS:=-Wall -Wshadow -Wfatal-errors $(INC) -MMD -MP
 CFLAGS:=-std=gnu18
-CPPFLAGS:=-std=gnu++20
+CPPFLAGS:=-std=gnu++17
 RELEASE_FLAGS:=-O2 -march=native
 DEBUG_FLAGS:=-DDEBUG -Og -ggdb
 LDFLAGS:=-lGL -lGLEW -lglfw -ldl -lm -lfreeimage -lfreetype
