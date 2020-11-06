@@ -20,6 +20,7 @@ DEBUG_OFILES = $(patsubst $(SRCDIR)%,$(DEBUGODIR)%,$(patsubst %.c,%.c.o,$(CFILES
 DEBUG_OFILES += $(patsubst $(SRCDIR)%,$(DEBUGODIR)%,$(patsubst %.cpp,%.cpp.o,$(CPPFILES)))
 RELEASE_OFILES = $(patsubst $(SRCDIR)%,$(RELEASEODIR)%,$(patsubst %.c,%.c.o,$(CFILES)))
 RELEASE_OFILES += $(patsubst $(SRCDIR)%,$(RELEASEODIR)%,$(patsubst %.cpp,%.cpp.o,$(CPPFILES)))
+ALL_OFILES = $(DEBUG_OFILES) $(RELEASE_OFILES)
 RELEASE_TARGET := final
 DEBUG_TARGET := final_debug
 
@@ -35,6 +36,8 @@ debug: $(DEBUG_TARGET)
 
 -include $(DEBUG_OFILES:%.o=%.d)
 -include $(RELEASE_OFILES:%.o=%.d)
+
+$(ALL_OFILES) : Makefile
 
 $(RELEASEODIR) $(DEBUGODIR) :
 	mkdir -p $@
