@@ -35,16 +35,15 @@ void Matrix4::print(void)
     }
 }
 
-Matrix4 Matrix4::operator*(const float f)
+Matrix4& Matrix4::operator*=(const float f)
 {
-    std::array<float, 16> matCopy = this->mat;
-    for (size_t i = 0; i < matCopy.size(); ++i) {
-        matCopy[i] *= f;
+    for (size_t i = 0; i < this->mat.size(); ++i) {
+        this->mat[i] *= f;
     }
-    return Matrix4(matCopy);
+    return *this;
 }
 
-Matrix4 Matrix4::operator*(const Matrix4 &matrix4)
+Matrix4& Matrix4::operator*=(const Matrix4 &matrix4)
 {
     std::array<float, 16> res = {};
     for (size_t i = 0; i < 4; ++i){
@@ -54,29 +53,52 @@ Matrix4 Matrix4::operator*(const Matrix4 &matrix4)
             }
         }
     }
-    return Matrix4(res);
+    this->mat = res;
+    return *this;
 }
 
-Matrix4 Matrix4::operator+(const Matrix4 &matrix4)
+Matrix4 &Matrix4::operator+=(const Matrix4 &matrix4)
 {
-    std::array<float, 16> matCopy = this->mat;
-    for (size_t i = 0; i < matCopy.size(); ++i) {
-        matCopy[i] += matrix4.mat[i];
+    for (size_t i = 0; i < this->mat.size(); ++i) {
+        this->mat[i] += matrix4.mat[i];
     }
-    return Matrix4(matCopy);
+    return *this;
 }
 
-Matrix4 Matrix4::operator-(const Matrix4 &matrix4)
+Matrix4 &Matrix4::operator-=(const Matrix4 &matrix4)
 {
-    std::array<float, 16> matCopy = this->mat;
-    for (size_t i = 0; i < matCopy.size(); ++i) {
-        matCopy[i] -= matrix4.mat[i];
+    for (size_t i = 0; i < this->mat.size(); ++i) {
+        this->mat[i] -= matrix4.mat[i];
     }
-    return Matrix4(matCopy);
+    return *this;
 }
 
 
 const float* Matrix4::data(void) const noexcept
 {
     return this->mat.data();
+}
+
+Matrix4 operator*(Matrix4 lhs, const float rhs)
+{
+    lhs *= rhs;
+    return lhs;
+}
+
+Matrix4 operator*(Matrix4 lhs, const Matrix4 &rhs)
+{
+    lhs *= rhs;
+    return lhs;
+}
+
+Matrix4 operator+(Matrix4 lhs, const Matrix4 &rhs)
+{
+    lhs += rhs;
+    return lhs;
+}
+
+Matrix4 operator-(Matrix4 lhs, const Matrix4 &rhs)
+{
+    lhs -= rhs;
+    return lhs;
 }
