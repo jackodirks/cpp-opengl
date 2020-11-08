@@ -11,3 +11,18 @@ Vector3 Vector3::crossProduct(const Vector3 &vec3)
     float z = (this->vec[0] * vec3.vec[1]) - (this->vec[1] * vec3.vec[0]);
     return Vector3(x, y, z);
 }
+
+const float Vector3::x() const
+{
+    return this->vec[0];
+}
+
+const float Vector3::y() const
+{
+    return this->vec[1];
+}
+
+const float Vector3::z() const
+{
+    return this->vec[2];
+}
