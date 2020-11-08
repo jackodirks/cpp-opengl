@@ -6,7 +6,5 @@
  
 int main() {
     OpenGlMatrix mat;
-    mat.rotate(1);
-    mat.print();
     return 0;
 }
