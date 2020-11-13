@@ -21,37 +21,37 @@ OrthographicProjectionMatrix::OrthographicProjectionMatrix(const float left, con
     this->mat = createMatrix();
 }
 
-void OrthographicProjectionMatrix::updateLeft(const float left)
+void OrthographicProjectionMatrix::setLeft(const float left)
 {
     this->iLeft = left;
     this->mat = createMatrix();
 }
 
-void OrthographicProjectionMatrix::updateRight(const float right)
+void OrthographicProjectionMatrix::setRight(const float right)
 {
     this->iRight = right;
     this->mat = createMatrix();
 }
 
-void OrthographicProjectionMatrix::updateBottom(const float bottom)
+void OrthographicProjectionMatrix::setBottom(const float bottom)
 {
     this->iBottom = bottom;
     this->mat = createMatrix();
 }
 
-void OrthographicProjectionMatrix::updateUp(const float up)
+void OrthographicProjectionMatrix::setUp(const float up)
 {
     this->iUp = up;
     this->mat = createMatrix();
 }
 
-void OrthographicProjectionMatrix::updateNear(const float near)
+void OrthographicProjectionMatrix::setNear(const float near)
 {
     this->iNear = near;
     this->mat = createMatrix();
 }
 
-void OrthographicProjectionMatrix::updateFar(const float far)
+void OrthographicProjectionMatrix::setFar(const float far)
 {
     this->iFar = far;
     this->mat = createMatrix();
@@ -62,7 +62,7 @@ const float* OrthographicProjectionMatrix::data(void) const noexcept
     return this->mat.data();
 }
 
-void OrthographicProjectionMatrix::updateWindowSize(const float width, const float height)
+void OrthographicProjectionMatrix::setWindowSize(const float width, const float height)
 {
     this->iRight = width;
     this->iUp = height;

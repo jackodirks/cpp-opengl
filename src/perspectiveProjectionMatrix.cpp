@@ -28,25 +28,25 @@ const float* PerspectiveProjectionMatrix::data(void) const noexcept
     return this->mat.data();
 }
 
-void PerspectiveProjectionMatrix::updateFov(const float fov)
+void PerspectiveProjectionMatrix::setFov(const float fov)
 {
     this->iFov = fov;
     this->mat = this->createMatrix();
 }
 
-void PerspectiveProjectionMatrix::updateNear(const float near)
+void PerspectiveProjectionMatrix::setNear(const float near)
 {
     this->iNear = near;
     this->mat = this->createMatrix();
 }
 
-void PerspectiveProjectionMatrix::updateFar(const float far)
+void PerspectiveProjectionMatrix::setFar(const float far)
 {
     this->iFar = far;
     this->mat = this->createMatrix();
 }
 
-void PerspectiveProjectionMatrix::updateWindowSize(float width, float height)
+void PerspectiveProjectionMatrix::setWindowSize(float width, float height)
 {
     this->iAr = width/height;
     this->mat = this->createMatrix();
