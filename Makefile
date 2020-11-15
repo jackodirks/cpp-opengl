@@ -5,7 +5,7 @@ CFILES=$(wildcard $(SRCDIR)*.c)
 CPPFILES=$(wildcard $(SRCDIR)*.cpp)
 INC= -Iinc/ -isystem/usr/include/freetype2
 LIBDIR= 
-COMMONFLAGS:=-Wall -Wshadow -Wfatal-errors $(INC) -MMD -MP
+COMMONFLAGS:=-Wall -Wfatal-errors $(INC) -MMD -MP
 CFLAGS:=-std=gnu18
 CPPFLAGS:=-std=gnu++17
 RELEASE_FLAGS:=-O2 -march=native
