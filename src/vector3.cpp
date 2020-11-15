@@ -7,7 +7,9 @@ Vector3::Vector3(const float x, const float y, const float z)
     : Vector4(x, y, z, 0)
 {}
 
-Vector3 Vector3::crossProduct(const Vector3 &vec3)
+Vector3::Vector3(const Vector4& vec) : Vector4(vec)
+{}
+
 Vector3 Vector3::crossProduct(const Vector3 &vec3) const
 {
     float x = (this->vec[1] * vec3.vec[2]) - (this->vec[2] * vec3.vec[1]);
