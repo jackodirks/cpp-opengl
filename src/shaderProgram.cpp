@@ -3,32 +3,30 @@
 #include <sstream>
 #include <utility>
 
-#include "glad/glad.h"
 #include "shaderProgram.hpp"
 
-void ShaderProgram::printCompilationError(GLuint shader)
+std::string ShaderProgram::getCompilationError(GLuint shader)
 {
     GLint logSize;
     glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logSize);
     if (logSize == 0)
-        return;
+        return "glGetShaderiv reports GL_INFO_LOG_LENGTH == 0";
     std::string compilerOutput;
     compilerOutput.resize(static_cast<std::string::size_type>(logSize));
     glGetShaderInfoLog(shader, logSize, NULL, &compilerOutput[0]);
-    std::cerr << compilerOutput;
+    return compilerOutput;
 }
 
-void ShaderProgram::printLinkingError(GLuint shaderProgram)
+std::string ShaderProgram::getLinkingError(GLuint shaderProgram)
 {
     GLint logSize;
     glGetProgramiv(shaderProgram, GL_INFO_LOG_LENGTH, &logSize);
     if (logSize == 0)
-        return;
+        return "glGetProgramiv reports GL_INFO_LOG_LENGTH == 0";
     std::string linkerOutput;
     linkerOutput.resize(static_cast<std::string::size_type>(logSize));
-
     glGetProgramInfoLog(shaderProgram, logSize, NULL, &linkerOutput[0]);
-    std::cerr << linkerOutput;
+    return linkerOutput;
 }
 
 
@@ -47,9 +45,9 @@ ShaderProgram::ShaderProgram(const std::string &vertexShaderPath, const std::str
     GLint success;
     glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
     if (success == GL_FALSE) {
-        printCompilationError(vertexShader);
+        std::string error = getCompilationError(vertexShader);
         glDeleteShader(vertexShader);
-        throw std::runtime_error("Vertex shader compilation failed");
+        throw std::runtime_error("Vertex shader compilation failed: " + error);
     }
 
     // Load and compile fragment shader
@@ -64,10 +62,10 @@ ShaderProgram::ShaderProgram(const std::string &vertexShaderPath, const std::str
     glCompileShader(fragmentShader);
     glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
     if (success == GL_FALSE) {
-        printCompilationError(fragmentShader);
+        std::string error = getCompilationError(fragmentShader);
         glDeleteShader(vertexShader);
         glDeleteShader(fragmentShader);
-        throw std::runtime_error("Fragment shader compilation failed");
+        throw std::runtime_error("Fragment shader compilation failed: " + error);
     }
 
     // Link the two together
@@ -84,9 +82,9 @@ ShaderProgram::ShaderProgram(const std::string &vertexShaderPath, const std::str
 
     glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
     if (success == GL_FALSE) {
-        printLinkingError(shaderProgram);
+        std::string error = getLinkingError(shaderProgram);
         glDeleteProgram(shaderProgram);
-        throw std::runtime_error("Shader linking stage failed");
+        throw std::runtime_error("Shader linking stage failed: " + error);
     }
 }
 

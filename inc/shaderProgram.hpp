@@ -4,8 +4,8 @@
 class ShaderProgram {
     private:
         GLuint shaderProgram;
-        void printCompilationError(GLuint shader);
-        void printLinkingError(GLuint shaderProgram);
+        std::string getCompilationError(GLuint shader);
+        std::string getLinkingError(GLuint shaderProgram);
 
     public:
         ShaderProgram(const std::string &vertexShaderPath, const std::string &fragmentShaderPath);
