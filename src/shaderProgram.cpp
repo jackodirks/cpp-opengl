@@ -46,7 +46,7 @@ ShaderProgram::ShaderProgram(const std::string &vertexShaderPath, const std::str
     glCompileShader(vertexShader);
     GLint success;
     glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-    if (success != 0) {
+    if (success == GL_FALSE) {
         printCompilationError(vertexShader);
         glDeleteShader(vertexShader);
         throw std::runtime_error("Vertex shader compilation failed");
@@ -62,7 +62,7 @@ ShaderProgram::ShaderProgram(const std::string &vertexShaderPath, const std::str
     glShaderSource(fragmentShader, 1, &code, NULL);
     glCompileShader(fragmentShader);
     glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-    if (success != 0) {
+    if (success == GL_FALSE) {
         printCompilationError(fragmentShader);
         glDeleteShader(vertexShader);
         glDeleteShader(fragmentShader);
@@ -82,7 +82,7 @@ ShaderProgram::ShaderProgram(const std::string &vertexShaderPath, const std::str
     glDeleteShader(fragmentShader);
 
     glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-    if (success != 0) {
+    if (success == GL_FALSE) {
         printLinkingError(shaderProgram);
         glDeleteProgram(shaderProgram);
         throw std::runtime_error("Shader linking stage failed");
