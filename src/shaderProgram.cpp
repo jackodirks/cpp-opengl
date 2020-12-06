@@ -93,6 +93,13 @@ ShaderProgram::ShaderProgram(ShaderProgram&& other) : shaderProgram(std::exchang
 {}
 
 
+ShaderProgram& ShaderProgram::operator=(ShaderProgram&& other)
+{
+    this->shaderProgram = std::exchange(other.shaderProgram, 0);
+    return *this;
+}
+
+
 ShaderProgram::~ShaderProgram()
 {
     if (shaderProgram != 0)
