@@ -39,8 +39,8 @@ ShaderProgram::ShaderProgram(const std::string &vertexShaderPath, const std::str
     vertexShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
     std::stringstream vertexShaderContents;
     vertexShaderContents << vertexShaderFile.rdbuf();
-    std::string const &codeString = vertexShaderContents.str();
-    char const *code = codeString.c_str();
+    std::string const &vertexCodeString = vertexShaderContents.str();
+    char const *code = vertexCodeString.c_str();
     GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertexShader, 1, &code, NULL);
     glCompileShader(vertexShader);
@@ -54,10 +54,11 @@ ShaderProgram::ShaderProgram(const std::string &vertexShaderPath, const std::str
 
     // Load and compile fragment shader
     std::ifstream fragmentShaderFile(fragmentShaderPath.c_str());
-    vertexShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+    fragmentShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
     std::stringstream fragmentShaderContents;
     fragmentShaderContents << fragmentShaderFile.rdbuf();
-    code = codeString.c_str();
+    std::string const &fragmentCodeString = fragmentShaderContents.str();
+    code = fragmentCodeString.c_str();
     GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fragmentShader, 1, &code, NULL);
     glCompileShader(fragmentShader);
