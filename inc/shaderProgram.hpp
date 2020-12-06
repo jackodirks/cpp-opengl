@@ -1,6 +1,8 @@
 #ifndef SHADER_PROGRAM_HPP
 #define SHADER_PROGRAM_HPP
 
+#include "glad/glad.h"
+
 class ShaderProgram {
     private:
         GLuint shaderProgram;
