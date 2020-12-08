@@ -22,7 +22,13 @@ int main() {
         std::cerr << "Failed to initialize GLAD" << std::endl;
         return EXIT_FAILURE;
     }
-
-    ShaderProgram shader("shaders/vertex.vert", "shaders/fragment.frag");
+    ShaderProgram shader = []() -> ShaderProgram {
+        try {
+            return ShaderProgram("shaders/vertex.vert", "shaders/fragment.frag");
+        } catch (const std::runtime_error &e) {
+            std::cerr << "An error occured during construction of OpenGL shader: " << e.what();
+            std::exit(EXIT_FAILURE);
+        }
+    }();
     return 0;
 }

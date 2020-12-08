@@ -2,6 +2,8 @@
 #include <fstream>
 #include <sstream>
 #include <utility>
+#include <cerrno>
+#include <cstring>
 
 #include "shaderProgram.hpp"
 
@@ -33,16 +35,25 @@ std::string ShaderProgram::getLinkingError(GLuint shaderProgram)
 ShaderProgram::ShaderProgram(const std::string &vertexShaderPath, const std::string &fragmentShaderPath)
 {
     // Load and compile vertex shader
-    std::ifstream vertexShaderFile(vertexShaderPath.c_str());
-    vertexShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-    std::stringstream vertexShaderContents;
-    vertexShaderContents << vertexShaderFile.rdbuf();
-    std::string const &vertexCodeString = vertexShaderContents.str();
-    char const *code = vertexCodeString.c_str();
     GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &code, NULL);
-    glCompileShader(vertexShader);
+    try {
+        std::ifstream vertexShaderFile(vertexShaderPath.c_str());
+        vertexShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+        std::stringstream vertexShaderContents;
+        vertexShaderContents << vertexShaderFile.rdbuf();
+        std::string const &vertexCodeString = vertexShaderContents.str();
+        char const *code = vertexCodeString.c_str();
+        glShaderSource(vertexShader, 1, &code, NULL);
+    } catch (const std::ios_base::failure &e) {
+        glDeleteShader(vertexShader);
+        // The usage of errno requires POSIX.
+        // This trick also has no guarantee of working. It does work, though.
+        std::ostringstream errStream;
+        errStream << "Failure reading from " << vertexShaderPath << ". Errno: " << errno << " (" << strerror(errno) << ")" << std::endl;
+        throw std::runtime_error(errStream.str());
+    }
     GLint success;
+    glCompileShader(vertexShader);
     glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
     if (success == GL_FALSE) {
         std::string error = getCompilationError(vertexShader);
@@ -51,14 +62,23 @@ ShaderProgram::ShaderProgram(const std::string &vertexShaderPath, const std::str
     }
 
     // Load and compile fragment shader
-    std::ifstream fragmentShaderFile(fragmentShaderPath.c_str());
-    fragmentShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-    std::stringstream fragmentShaderContents;
-    fragmentShaderContents << fragmentShaderFile.rdbuf();
-    std::string const &fragmentCodeString = fragmentShaderContents.str();
-    code = fragmentCodeString.c_str();
     GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &code, NULL);
+    try {
+        std::ifstream fragmentShaderFile(fragmentShaderPath.c_str());
+        fragmentShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+        std::stringstream fragmentShaderContents;
+        fragmentShaderContents << fragmentShaderFile.rdbuf();
+        std::string const &fragmentCodeString = fragmentShaderContents.str();
+        char const *code = fragmentCodeString.c_str();
+        glShaderSource(fragmentShader, 1, &code, NULL);
+    } catch (const std::ios_base::failure &e) {
+        glDeleteShader(vertexShader);
+        glDeleteShader(fragmentShader);
+        // The usage of errno requires POSIX.
+        std::ostringstream errStream;
+        errStream << "Failure reading from " << fragmentShaderPath << ". Errno: " << errno << " (" << strerror(errno) << ")";
+        throw std::runtime_error(errStream.str());
+    }
     glCompileShader(fragmentShader);
     glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
     if (success == GL_FALSE) {
