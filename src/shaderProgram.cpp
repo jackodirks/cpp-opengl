@@ -137,6 +137,5 @@ ShaderProgram& ShaderProgram::operator=(ShaderProgram&& other)
 
 ShaderProgram::~ShaderProgram()
 {
-    if (shaderProgram != 0)
-        glDeleteProgram(shaderProgram);
+    glDeleteProgram(shaderProgram);
 }
