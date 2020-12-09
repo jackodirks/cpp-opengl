@@ -6,6 +6,7 @@
 #include <cstring>
 
 #include "shaderProgram.hpp"
+#include "glErrorToString.hpp"
 
 std::string ShaderProgram::getCompilationError(GLuint shader)
 {
@@ -36,6 +37,11 @@ ShaderProgram::ShaderProgram(const std::string &vertexShaderPath, const std::str
 {
     // Load and compile vertex shader
     GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    if (vertexShader == 0) {
+        std::stringstream errStream;
+        errStream << "Creating vertex shader failed: " << glErrorToString(glGetError());
+        throw std::runtime_error(errStream.str());
+    }
     try {
         std::ifstream vertexShaderFile(vertexShaderPath.c_str());
         vertexShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
@@ -63,6 +69,11 @@ ShaderProgram::ShaderProgram(const std::string &vertexShaderPath, const std::str
 
     // Load and compile fragment shader
     GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    if (fragmentShader == 0) {
+        std::stringstream errStream;
+        errStream << "Creating fragment shader failed: " << glErrorToString(glGetError());
+        throw std::runtime_error(errStream.str());
+    }
     try {
         std::ifstream fragmentShaderFile(fragmentShaderPath.c_str());
         fragmentShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
@@ -91,6 +102,11 @@ ShaderProgram::ShaderProgram(const std::string &vertexShaderPath, const std::str
     // Link the two together
     GLuint &shaderProgram = this->shaderProgram;
     shaderProgram = glCreateProgram();
+    if (shaderProgram == 0) {
+        std::stringstream errStream;
+        errStream << "Creating shader program failed: " << glErrorToString(glGetError());
+        throw std::runtime_error(errStream.str());
+    }
     glAttachShader(shaderProgram, vertexShader);
     glAttachShader(shaderProgram, fragmentShader);
     glLinkProgram(shaderProgram);
