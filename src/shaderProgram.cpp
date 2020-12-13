@@ -139,3 +139,8 @@ ShaderProgram::~ShaderProgram()
 {
     glDeleteProgram(shaderProgram);
 }
+
+void ShaderProgram::use()
+{
+    glUseProgram(this->shaderProgram);
+}

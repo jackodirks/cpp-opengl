@@ -18,6 +18,7 @@ class ShaderProgram {
         // We do allow move constructor and move assignment
         ShaderProgram(ShaderProgram&& other);
         ShaderProgram& operator=(ShaderProgram&&);
+        void use(void);
 };
 
 #endif //SHADER_PROGRAM_HPP
