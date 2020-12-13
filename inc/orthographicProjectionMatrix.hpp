@@ -5,7 +5,7 @@
 
 class OrthographicProjectionMatrix : public ProjectionMatrix {
     private:
-        float iLeft, iRight, iBottom, iUp, iNear, iFar;
+        float left, right, bottom, up, near, far;
         Matrix4 createMatrix(void);
     public:
         OrthographicProjectionMatrix(const float left, const float right, const float bottom, const float up, const float near, const float far);
