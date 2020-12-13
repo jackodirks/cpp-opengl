@@ -32,6 +32,16 @@ std::string ShaderProgram::getLinkingError(GLuint shaderProgram)
     return linkerOutput;
 }
 
+GLint ShaderProgram::getUniformLocation(const std::string &name)
+{
+   GLint location = glGetUniformLocation(this->shaderProgram, name.c_str());
+   if (location == -1) {
+        std::ostringstream errStream;
+        errStream << "Retrieving uniform location for uniform with name " << name << " failed: " << glErrorToString(glGetError());
+        throw std::runtime_error(errStream.str());
+   }
+   return location;
+}
 
 ShaderProgram::ShaderProgram(const std::string &vertexShaderPath, const std::string &fragmentShaderPath)
 {
@@ -143,4 +153,9 @@ ShaderProgram::~ShaderProgram()
 void ShaderProgram::use()
 {
     glUseProgram(this->shaderProgram);
+}
+
+void ShaderProgram::setUniformMatrix4v(const std::string &name, const size_t count, const bool transpose, const float* value)
+{
+    glUniformMatrix4fv(getUniformLocation(name), count, transpose, value);
 }
