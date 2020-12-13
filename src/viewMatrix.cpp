@@ -79,3 +79,7 @@ void ViewMatrix::move(const ViewMatrix::MoveDirections direction, const float de
 }
 
 
+const float* ViewMatrix::data() noexcept
+{
+    return this->lookAtMatrix.data();
+}

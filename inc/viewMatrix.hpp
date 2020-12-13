@@ -27,6 +27,7 @@ class ViewMatrix {
         ViewMatrix(const float sensitivity = 0.1, const float moveSpeed = 2.5);
         void move(const ViewMatrix::MoveDirections direction, const float deltaTime);
         void processMouseMovement(const float xPos, const float yPos);
+        const float* data(void) noexcept;
 };
 
 #endif //VIEW_MATRIX_HPP
