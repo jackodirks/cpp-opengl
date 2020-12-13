@@ -38,7 +38,7 @@ ShaderProgram::ShaderProgram(const std::string &vertexShaderPath, const std::str
     // Load and compile vertex shader
     GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
     if (vertexShader == 0) {
-        std::stringstream errStream;
+        std::ostringstream errStream;
         errStream << "Creating vertex shader failed: " << glErrorToString(glGetError());
         throw std::runtime_error(errStream.str());
     }
