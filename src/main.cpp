@@ -72,7 +72,7 @@ int main() {
     glEnable(GL_DEPTH_TEST);
     ShaderProgram shader = []() -> ShaderProgram {
         try {
-            return ShaderProgram("shaders/vertex.vert", "shaders/fragment.frag");
+            return ShaderProgram("shaders/vertex.vert", "shaders/fragmentLightsource.frag");
         } catch (const std::runtime_error &e) {
             std::cerr << "An error occured during construction of OpenGL shader: " << e.what();
             std::exit(EXIT_FAILURE);
@@ -95,6 +95,15 @@ int main() {
         // Set the background
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        // Draw the cube
+        shader.use();
+        // Copy the matrices
+        shader.setUniformMatrix4v("model", 1, true, modelMatrix.data());
+        shader.setUniformMatrix4v("view", 1, true, viewMatrix.data());
+        shader.setUniformMatrix4v("projection", 1, true, projectionMatrix.data());
+        glBindVertexArray(cubeVAO);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
