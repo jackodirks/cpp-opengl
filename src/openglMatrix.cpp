@@ -60,7 +60,7 @@ OpenGlMatrix::OpenGlMatrix()
 {
     this->translation = Vector3();
     this->rotation = Vector3();
-    this->scaling = Vector3();
+    this->scaling = Vector3(1, 1, 1);
     this->mat = Matrix4();
 }
 
