@@ -59,16 +59,14 @@ int main() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    GLFWwindow* window = glfwCreateWindow(800, 600, "LearnOpenGL", NULL, NULL);
-    if (window == NULL) {
-        std::cerr << "Failed to create GLFW window" << std::endl;
-        return EXIT_FAILURE;
-    }
-    glfwMakeContextCurrent(window);
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-        std::cerr << "Failed to initialize GLAD" << std::endl;
-        return EXIT_FAILURE;
-    }
+    GlfwWindow window = []() -> GlfwWindow {
+        try {
+            return GlfwWindow(800, 600, "LearnOpenGL", NULL, NULL);
+        } catch (const std::runtime_error &e) {
+            std::cerr << "An error occured during construction of GlfwWindow: " << e.what();
+            std::exit(EXIT_FAILURE);
+        }
+    }();
     glEnable(GL_DEPTH_TEST);
     ShaderProgram shader = []() -> ShaderProgram {
         try {
@@ -91,7 +89,7 @@ int main() {
     PerspectiveProjectionMatrix projectionMatrix(DEGREES_TO_RADIANS(45.0), 800, 600, 0.1, 100);
     OpenGlMatrix modelMatrix;
 
-    while(!glfwWindowShouldClose(window)) {
+    while(!window.shouldClose()) {
         // Set the background
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -105,7 +103,7 @@ int main() {
         glBindVertexArray(cubeVAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
-        glfwSwapBuffers(window);
+        window.swapBuffers();
         glfwPollEvents();
     }
     return 0;
