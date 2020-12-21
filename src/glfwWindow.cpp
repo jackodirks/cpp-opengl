@@ -75,3 +75,10 @@ void GlfwWindow::swapBuffers(void)
 {
     glfwSwapBuffers(window);
 }
+
+struct GlfwWindow::WindowSize GlfwWindow::getWindowSize(void)
+{
+    struct GlfwWindow::WindowSize windowSize;
+    glfwGetWindowSize(window, &windowSize.width, &windowSize.height);
+    return windowSize;
+}

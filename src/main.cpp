@@ -86,7 +86,8 @@ int main() {
     glEnableVertexAttribArray(0);
 
     ViewMatrix viewMatrix;
-    PerspectiveProjectionMatrix projectionMatrix(DEGREES_TO_RADIANS(45.0), 800, 600, 0.1, 100);
+    GlfwWindow::WindowSize size = window.getWindowSize();
+    PerspectiveProjectionMatrix projectionMatrix(DEGREES_TO_RADIANS(45.0), size.width, size.height, 0.1, 100);
     OpenGlMatrix modelMatrix;
     projectionMatrix.registerWindowResizeCallback(window);
 
