@@ -94,9 +94,6 @@ int main() {
     OpenGlMatrix modelMatrix;
     projectionMatrix.registerWindowResizeCallback(window);
 
-    OpenGlMatrix modelMatrix2;
-    modelMatrix2.addTranslate(1.25);
-
     while(!window.shouldClose()) {
         // Set the background
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
@@ -105,12 +102,23 @@ int main() {
         // Draw the cube
         shader.use();
         // Copy the matrices
+        modelMatrix.setTranslate();
         shader.setUniformMatrix4v("model", 1, true, modelMatrix.data());
         shader.setUniformMatrix4v("view", 1, true, viewMatrix.data());
         shader.setUniformMatrix4v("projection", 1, true, projectionMatrix.data());
         glBindVertexArray(cubeVAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
-        shader.setUniformMatrix4v("model", 1, true, modelMatrix2.data());
+        modelMatrix.setTranslate(1.25);
+        shader.setUniformMatrix4v("model", 1, true, modelMatrix.data());
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        modelMatrix.setTranslate(-1.25);
+        shader.setUniformMatrix4v("model", 1, true, modelMatrix.data());
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        modelMatrix.setTranslate(0, -1.25);
+        shader.setUniformMatrix4v("model", 1, true, modelMatrix.data());
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        modelMatrix.setTranslate(0, 1.25);
+        shader.setUniformMatrix4v("model", 1, true, modelMatrix.data());
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
         window.swapBuffers();
