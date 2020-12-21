@@ -55,7 +55,10 @@ static float vertices[] = {
 
 int main() {
 
-    glfwInit();
+    if (!glfwInit()) {
+        std::cerr << "glfwInit failed";
+        std::exit(EXIT_FAILURE);
+    }
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -108,5 +111,6 @@ int main() {
         window.swapBuffers();
         glfwPollEvents();
     }
+    glfwTerminate();
     return 0;
 }
