@@ -53,6 +53,7 @@ GlfwWindow::~GlfwWindow()
     for (std::pair<std::function<void(int, int)>, std::function<void(void)>> p : resizeCallbackList) {
         std::get<1>(p)();
     }
+    glfwDestroyWindow(window);
 }
 
 GlfwWindow::ResizeCallbackCookie GlfwWindow::registerResizeCallback(std::function<void(int,int)> changeNotify, std::function<void(void)> destructNotify)
