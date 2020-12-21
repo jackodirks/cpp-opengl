@@ -1,6 +1,8 @@
 #ifndef PROJECTION_MATRIX_HPP
 #define PROJECTION_MATRIX_HPP
 
+#include <functional>
+
 #include "matrix4.hpp"
 #include "glfwWindow.hpp"
 
