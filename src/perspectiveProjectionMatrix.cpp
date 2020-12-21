@@ -7,19 +7,19 @@ Matrix4 PerspectiveProjectionMatrix::createMatrix(void)
 {
 
     return Matrix4({
-        1/(this->iAr*std::tan(this->iFov/2))    , 0.0                           , 0.0                                                           , 0.0,
-        0.0                                     , 1/(std::tan(this->iFov/2))    , 0.0                                                           , 0.0,
-        0.0                                     , 0.0                           , -1*((this->iNear + this->iFar) / (this->iFar - this->iNear))  , (-2*this->iFar*this->iNear)/(this->iFar - this->iNear),
-        0.0                                     , 0.0                           , -1.0                                                          , 0.0
+        1/(this->ar*std::tan(this->fov/2))    , 0.0                          , 0.0                                                       , 0.0,
+        0.0                                   , 1/(std::tan(this->fov/2))    , 0.0                                                       , 0.0,
+        0.0                                   , 0.0                          , -1*((this->near + this->far) / (this->far - this->near))  , (-2*this->far*this->near)/(this->far - this->near),
+        0.0                                   , 0.0                          , -1.0                                                      , 0.0
     });
 }
 
 PerspectiveProjectionMatrix::PerspectiveProjectionMatrix(const float fov, const float width, const float height, const float near, const float far)
 {
-   this->iFov = fov;
-   this->iAr = width/height;
-   this->iNear = near;
-   this->iFar = far;
+   this->fov = fov;
+   this->ar = width/height;
+   this->near = near;
+   this->far = far;
    this->mat = this->createMatrix();
 }
 
@@ -30,24 +30,24 @@ const float* PerspectiveProjectionMatrix::data(void) const noexcept
 
 void PerspectiveProjectionMatrix::setFov(const float fov)
 {
-    this->iFov = fov;
+    this->fov = fov;
     this->mat = this->createMatrix();
 }
 
 void PerspectiveProjectionMatrix::setNear(const float near)
 {
-    this->iNear = near;
+    this->near = near;
     this->mat = this->createMatrix();
 }
 
 void PerspectiveProjectionMatrix::setFar(const float far)
 {
-    this->iFar = far;
+    this->far = far;
     this->mat = this->createMatrix();
 }
 
 void PerspectiveProjectionMatrix::setWindowSize(float width, float height)
 {
-    this->iAr = width/height;
+    this->ar = width/height;
     this->mat = this->createMatrix();
 }

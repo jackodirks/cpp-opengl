@@ -5,7 +5,7 @@
 
 class PerspectiveProjectionMatrix : public ProjectionMatrix {
     private:
-        float iFov, iAr, iNear, iFar;
+        float fov, ar, near, far;
         Matrix4 createMatrix(void);
     public:
         PerspectiveProjectionMatrix(const float fov, const float width, const float height, const float near, const float far);
