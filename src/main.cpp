@@ -88,6 +88,7 @@ int main() {
     ViewMatrix viewMatrix;
     PerspectiveProjectionMatrix projectionMatrix(DEGREES_TO_RADIANS(45.0), 800, 600, 0.1, 100);
     OpenGlMatrix modelMatrix;
+    projectionMatrix.registerWindowResizeCallback(window);
 
     while(!window.shouldClose()) {
         // Set the background

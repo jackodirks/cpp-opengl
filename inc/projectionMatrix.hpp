@@ -2,13 +2,23 @@
 #define PROJECTION_MATRIX_HPP
 
 #include "matrix4.hpp"
+#include "glfwWindow.hpp"
 
 class ProjectionMatrix {
     protected:
         Matrix4 mat;
+        std::function<void(void)> unregisterFunction;
+
+        virtual void unregister(void);
     public:
-        virtual const float* data(void) const noexcept = 0;
+        ProjectionMatrix();
+        ProjectionMatrix(const ProjectionMatrix& other);
+        virtual ~ProjectionMatrix();
+
+        ProjectionMatrix& operator=(const ProjectionMatrix& other);
+
         virtual void setWindowSize(const float width, const float height) = 0;
+        virtual void registerWindowResizeCallback(GlfwWindow& window);
 };
 
 #endif //PROJECTION_MATRIX_HPP
