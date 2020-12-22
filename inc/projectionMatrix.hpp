@@ -17,7 +17,7 @@ class ProjectionMatrix {
         ProjectionMatrix(const ProjectionMatrix& other);
         virtual ~ProjectionMatrix();
 
-        ProjectionMatrix& operator=(const ProjectionMatrix& other);
+        virtual ProjectionMatrix& operator=(const ProjectionMatrix& other);
 
         virtual void setWindowSize(const float width, const float height) = 0;
         virtual void registerWindowResizeCallback(GlfwWindow& window);
