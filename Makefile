@@ -1,7 +1,7 @@
 SRCDIR=src/
 CFILES=$(wildcard $(SRCDIR)*.c)
 CXXFILES=$(wildcard $(SRCDIR)*.cpp)
-INC= -Iinc/ -isystem/usr/include/freetype2
+INC= -Iinc/ -I/usr/include/freetype2
 LIBDIR=
 COMMONFLAGS:=-Wall -Wfatal-errors $(INC) -MMD -MP
 CFLAGS:=-std=gnu18
