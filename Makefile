@@ -1,5 +1,3 @@
-CC=cc
-CPP=c++
 SRCDIR=src/
 CFILES=$(wildcard $(SRCDIR)*.c)
 CPPFILES=$(wildcard $(SRCDIR)*.cpp)
