@@ -3,14 +3,10 @@ CFILES=$(wildcard $(SRCDIR)*.c)
 CXXFILES=$(wildcard $(SRCDIR)*.cpp)
 INC= -Iinc/ -I/usr/include/freetype2
 LIBDIR=
-COMMONFLAGS:=-Wall -Wfatal-errors $(INC) -MMD -MP
-CFLAGS:=-std=gnu18
-CXXFLAGS:=-std=gnu++17 -Wshadow=local
-RELEASE_FLAGS:=-O2 -march=native
-DEBUG_FLAGS:=-DDEBUG -Og -ggdb
+CFLAGS:=-std=gnu18 -Wall -Wfatal-errors
+CXXFLAGS:=-std=gnu++17 -Wshadow=local -Wall -Wfatal-errors
+CPPFLAGS:=$(INC) -MMD -MP
 LDFLAGS:=-lGL -lGLEW -lglfw -ldl -lm -lfreeimage -lfreetype
-RELEASE_LDFLAGS:=
-DEBUG_LDFLAGS:=
 ODIR=obj/
 DEBUGODIR=$(ODIR)debug/
 RELEASEODIR=$(ODIR)release/
@@ -28,8 +24,13 @@ DEBUG_TARGET := final_debug
 
 all: release debug docs
 
+release: CFLAGS += -O2 -march=native
+release: CXXFLAGS += -O2 -march=native
 release: $(RELEASE_TARGET)
 
+debug: CFLAGS += -Og -ggdb
+debug: CXXFLAGS += -Og -ggdb
+debug: CPPFLAGS += -DDEBUG
 debug: $(DEBUG_TARGET)
 
 -include $(DEBUG_OFILES:%.o=%.d)
@@ -41,22 +42,22 @@ $(RELEASEODIR) $(DEBUGODIR) :
 	mkdir -p $@
 
 $(DEBUGODIR)%.c.o: $(SRCDIR)%.c | $(DEBUGODIR)
-	$(CC) $(COMMONFLAGS) $(CFLAGS) $(DEBUG_FLAGS) -c $< -o $@
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
 $(RELEASEODIR)%.c.o: $(SRCDIR)%.c | $(RELEASEODIR)
-	$(CC) $(COMMONFLAGS) $(CFLAGS) $(RELEASE_FLAGS) -c $< -o $@
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
 $(DEBUGODIR)%.cpp.o: $(SRCDIR)%.cpp | $(DEBUGODIR)
-	$(CXX) $(COMMONFLAGS) $(CXXFLAGS) $(DEBUG_FLAGS) -c $< -o $@
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
 
 $(RELEASEODIR)%.cpp.o: $(SRCDIR)%.cpp | $(RELEASEODIR)
-	$(CXX) $(COMMONFLAGS) $(CXXFLAGS) $(RELEASE_FLAGS) -c $< -o $@
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
 
 $(DEBUG_TARGET): $(DEBUG_OFILES)
-	$(CXX) -o $@ $^ $(LDFLAGS) $(DEBUG_LDFLAGS)
+	$(CXX) -o $@ $^ $(LDFLAGS)
 
 $(RELEASE_TARGET): $(RELEASE_OFILES)
-	$(CXX) -o $@ $^ $(LDFLAGS) $(RELEASE_LDFLAGS)
+	$(CXX) -o $@ $^ $(LDFLAGS)
 
 clean:
 	rm -rf $(ODIR)
