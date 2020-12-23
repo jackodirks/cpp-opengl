@@ -5,6 +5,7 @@
 
 class OrthographicProjectionMatrix : public ProjectionMatrix {
     private:
+        Matrix4 mat;
         float left, right, bottom, up, near, far;
         Matrix4 createMatrix(void);
     public:

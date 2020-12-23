@@ -8,13 +8,12 @@
 
 class ProjectionMatrix {
     protected:
-        Matrix4 mat;
         std::function<void(void)> unregisterFunction;
 
         virtual void unregister(void);
     public:
-        ProjectionMatrix();
-        ProjectionMatrix(const ProjectionMatrix& other);
+        ProjectionMatrix() = default;
+        ProjectionMatrix(const ProjectionMatrix&);
         virtual ~ProjectionMatrix();
 
         virtual ProjectionMatrix& operator=(const ProjectionMatrix& other);

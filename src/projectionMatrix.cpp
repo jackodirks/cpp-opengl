@@ -5,18 +5,13 @@ ProjectionMatrix::~ProjectionMatrix()
     unregister();
 }
 
-ProjectionMatrix::ProjectionMatrix()
+ProjectionMatrix::ProjectionMatrix(const ProjectionMatrix&)
 {}
-
-ProjectionMatrix::ProjectionMatrix(const ProjectionMatrix& other) : mat(other.mat)
-{}
-
 
 ProjectionMatrix& ProjectionMatrix::operator=(const ProjectionMatrix& other)
 {
     if (this == &other) return *this;
     unregister();
-    this->mat = other.mat;
     return *this;
 }
 
