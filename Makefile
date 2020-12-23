@@ -26,9 +26,9 @@ DEBUG_TARGET := final_debug
 
 .DEFAULT_GOAL := release
 
-.PHONY: all clean debug release
+.PHONY: all clean debug release docs
 
-all: release debug
+all: release debug docs
 
 release: $(RELEASE_TARGET)
 
@@ -64,3 +64,6 @@ clean:
 	rm -rf $(ODIR)
 	rm -f $(RELEASE_TARGET)
 	rm -f $(DEBUG_TARGET)
+
+docs:
+	doxygen Doxyfile
