@@ -16,7 +16,7 @@ class OrthographicProjectionMatrix : public ProjectionMatrix {
         void setNear(const float near);
         void setFar(const float far);
         const float* data(void) const noexcept;
-        void setWindowSize(const float width, const float height);
+        void setWindowSize(const float width, const float height) override;
 };
 
 #endif //ORTHOGRAPHIC_PROJECTION_MATRIX_HPP
