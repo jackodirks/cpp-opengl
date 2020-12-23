@@ -4,7 +4,7 @@ CXXFILES=$(wildcard $(SRCDIR)*.cpp)
 INC= -Iinc/ -I/usr/include/freetype2
 LIBDIR=
 CFLAGS:=-std=gnu18 -Wall -Wfatal-errors
-CXXFLAGS:=-std=gnu++17 -Wshadow=local -Wall -Wfatal-errors
+CXXFLAGS:=-std=gnu++20 -Wshadow=local -Wall -Wfatal-errors
 CPPFLAGS:=$(INC) -MMD -MP
 LDFLAGS:=-lGL -lGLEW -lglfw -ldl -lm -lfreeimage -lfreetype
 ODIR=obj/
@@ -22,7 +22,7 @@ DEBUG_TARGET := final_debug
 
 .PHONY: all clean debug release docs
 
-all: release debug docs
+all: release debug
 
 release: CFLAGS += -O2 -march=native
 release: CXXFLAGS += -O2 -march=native
