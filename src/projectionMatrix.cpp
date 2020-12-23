@@ -40,3 +40,8 @@ void ProjectionMatrix::unregister(void)
         unregisterFunction = 0;
     }
 }
+
+bool ProjectionMatrix::resizeCallbackRegistered(void)
+{
+    return static_cast<bool>(unregisterFunction);
+}

@@ -21,6 +21,7 @@ class ProjectionMatrix {
 
         virtual void setWindowSize(const float width, const float height) = 0;
         virtual void registerWindowResizeCallback(GlfwWindow& window);
+        virtual bool resizeCallbackRegistered(void);
 };
 
 #endif //PROJECTION_MATRIX_HPP
