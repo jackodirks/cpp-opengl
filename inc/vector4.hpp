@@ -7,7 +7,7 @@ class Vector4 {
     protected:
         std::array<float, 4> vec;
     public:
-        explicit Vector4(const std::array<float, 4> &vector);
+        Vector4(const std::array<float, 4> &vector);
         Vector4(const float x = 0, const float y = 0, const float z = 0, const float w = 0);
         const float* data(void) const noexcept;
         Vector4& normalize(void);
