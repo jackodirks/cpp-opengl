@@ -16,7 +16,7 @@ std::string ShaderProgram::getCompilationError(GLuint shader)
         return "glGetShaderiv reports GL_INFO_LOG_LENGTH == 0";
     std::string compilerOutput;
     compilerOutput.resize(static_cast<std::string::size_type>(logSize));
-    glGetShaderInfoLog(shader, logSize, NULL, &compilerOutput[0]);
+    glGetShaderInfoLog(shader, logSize, nullptr, &compilerOutput[0]);
     return compilerOutput;
 }
 
@@ -28,7 +28,7 @@ std::string ShaderProgram::getLinkingError(GLuint shaderProgram)
         return "glGetProgramiv reports GL_INFO_LOG_LENGTH == 0";
     std::string linkerOutput;
     linkerOutput.resize(static_cast<std::string::size_type>(logSize));
-    glGetProgramInfoLog(shaderProgram, logSize, NULL, &linkerOutput[0]);
+    glGetProgramInfoLog(shaderProgram, logSize, nullptr, &linkerOutput[0]);
     return linkerOutput;
 }
 
@@ -59,7 +59,7 @@ ShaderProgram::ShaderProgram(const std::string &vertexShaderPath, const std::str
         vertexShaderContents << vertexShaderFile.rdbuf();
         std::string const &vertexCodeString = vertexShaderContents.str();
         char const *code = vertexCodeString.c_str();
-        glShaderSource(vertexShader, 1, &code, NULL);
+        glShaderSource(vertexShader, 1, &code, nullptr);
     } catch (const std::ios_base::failure &e) {
         glDeleteShader(vertexShader);
         // The usage of errno requires POSIX.
@@ -91,7 +91,7 @@ ShaderProgram::ShaderProgram(const std::string &vertexShaderPath, const std::str
         fragmentShaderContents << fragmentShaderFile.rdbuf();
         std::string const &fragmentCodeString = fragmentShaderContents.str();
         char const *code = fragmentCodeString.c_str();
-        glShaderSource(fragmentShader, 1, &code, NULL);
+        glShaderSource(fragmentShader, 1, &code, nullptr);
     } catch (const std::ios_base::failure &e) {
         glDeleteShader(vertexShader);
         glDeleteShader(fragmentShader);

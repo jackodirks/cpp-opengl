@@ -20,7 +20,7 @@ class GlfwWindow {
         };
 
         explicit GlfwWindow(int width = 800, int height = 600, const std::string title = "",
-                GLFWmonitor* monitor = NULL, GlfwWindow* share = NULL);
+                GLFWmonitor* monitor = nullptr, GlfwWindow* share = nullptr);
         ~GlfwWindow();
         GlfwWindow(const GlfwWindow&) = delete;
         GlfwWindow(GlfwWindow&&) = delete;

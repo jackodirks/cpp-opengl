@@ -64,7 +64,7 @@ int main() {
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     GlfwWindow window = []() -> GlfwWindow {
         try {
-            return GlfwWindow(800, 600, "LearnOpenGL", NULL, NULL);
+            return GlfwWindow(800, 600, "LearnOpenGL", nullptr, nullptr);
         } catch (const std::runtime_error &e) {
             std::cerr << "An error occured during construction of GlfwWindow: " << e.what();
             std::exit(EXIT_FAILURE);

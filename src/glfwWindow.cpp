@@ -13,15 +13,15 @@ void GlfwWindow::setFramebufferSizeCallback(GLFWwindow *window, int width, int h
 
 GlfwWindow::GlfwWindow(int width, int height, const std::string title, GLFWmonitor* monitor, GlfwWindow* share)
 {
-    GLFWwindow *s = NULL;
-    if (share != NULL)
+    GLFWwindow *s = nullptr;
+    if (share != nullptr)
         s = share->window;
     window = glfwCreateWindow(width, height, title.c_str(), monitor, s);
-    if (window == NULL) {
+    if (window == nullptr) {
         const char* errDesc;
         int err = glfwGetError(&errDesc);
         std::ostringstream errStream;
-        if (errDesc == NULL)
+        if (errDesc == nullptr)
             errDesc = "<glfwGetError set errDesc to NULL>";
         errStream << "glfwCreateWindow failed: " << err << " " << errDesc;
         throw std::runtime_error(errStream.str());
@@ -30,7 +30,7 @@ GlfwWindow::GlfwWindow(int width, int height, const std::string title, GLFWmonit
     const char* errDesc;
     int err = glfwGetError(&errDesc);
     if (err != GLFW_NO_ERROR) {
-        if (errDesc == NULL)
+        if (errDesc == nullptr)
             errDesc = "<glfwGetError set errDesc to NULL>";
         std::ostringstream errStream;
         errStream << "glfwMakeContextCurrent failed: " << err << " " << errDesc;
