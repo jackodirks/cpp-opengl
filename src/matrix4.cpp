@@ -24,13 +24,13 @@ Matrix4& Matrix4::operator*=(const float f)
     return *this;
 }
 
-Matrix4& Matrix4::operator*=(const Matrix4 &matrix4)
+Matrix4& Matrix4::operator*=(const Matrix4 &other)
 {
     std::array<float, 16> res = {};
     for (size_t i = 0; i < 4; ++i){
         for (size_t j = 0; j < 4; ++j){
             for (size_t k = 0; k < 4; ++k){
-                res[i*4 + j] += this->mat[i*4 + k] * matrix4.mat[k*4 + j];
+                res[i*4 + j] += this->mat[i*4 + k] * other.mat[k*4 + j];
             }
         }
     }
@@ -38,22 +38,21 @@ Matrix4& Matrix4::operator*=(const Matrix4 &matrix4)
     return *this;
 }
 
-Matrix4 &Matrix4::operator+=(const Matrix4 &matrix4)
+Matrix4 &Matrix4::operator+=(const Matrix4 &other)
 {
     for (size_t i = 0; i < this->mat.size(); ++i) {
-        this->mat[i] += matrix4.mat[i];
+        this->mat[i] += other.mat[i];
     }
     return *this;
 }
 
-Matrix4 &Matrix4::operator-=(const Matrix4 &matrix4)
+Matrix4 &Matrix4::operator-=(const Matrix4 &other)
 {
     for (size_t i = 0; i < this->mat.size(); ++i) {
-        this->mat[i] -= matrix4.mat[i];
+        this->mat[i] -= other.mat[i];
     }
     return *this;
 }
-
 
 const float* Matrix4::data(void) const noexcept
 {
