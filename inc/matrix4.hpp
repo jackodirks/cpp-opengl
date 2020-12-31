@@ -9,7 +9,6 @@ class Matrix4 {
     public:
         Matrix4(void);
         Matrix4(const std::array<float, 16> &matrix4);
-        Matrix4(const Matrix4 &matrix4);
         Matrix4& operator*=(const float f);
         Matrix4& operator*=(const Matrix4 &matrix4);
         Matrix4& operator+=(const Matrix4 &matrix4);

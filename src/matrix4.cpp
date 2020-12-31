@@ -16,12 +16,6 @@ Matrix4::Matrix4(const std::array<float, 16> &matrix4)
     this->mat = matrix4;
 }
 
-
-Matrix4::Matrix4(const Matrix4 &matrix4)
-{
-    this->mat = matrix4.mat;
-}
-
 Matrix4& Matrix4::operator*=(const float f)
 {
     for (size_t i = 0; i < this->mat.size(); ++i) {
