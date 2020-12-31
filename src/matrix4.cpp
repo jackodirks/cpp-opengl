@@ -22,19 +22,6 @@ Matrix4::Matrix4(const Matrix4 &matrix4)
     this->mat = matrix4.mat;
 }
 
-void Matrix4::print(void)
-{
-    std::cout << std::fixed;
-    std::cout << std::setprecision(4);
-    for (size_t i = 0; i < 4; ++i) {
-        std::cout << "|";
-        for (size_t j = 0; j < 3; ++j) {
-            std::cout << mat[i * 4 + j] << "\t";
-        }
-        std::cout << mat[i*4 + 3] << "|" << std::endl;
-    }
-}
-
 Matrix4& Matrix4::operator*=(const float f)
 {
     for (size_t i = 0; i < this->mat.size(); ++i) {
