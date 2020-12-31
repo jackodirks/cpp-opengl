@@ -15,7 +15,6 @@ class GlfwWindow {
         static void setFramebufferSizeCallback(GLFWwindow* window, int width, int height);
         void windowDidResize(int width, int height);
     public:
-        typedef std::list<std::pair<std::function<void(int, int)>, std::function<void(void)>>>::const_iterator ResizeCallbackCookie;
         struct WindowSize {
             int width;
             int height;
@@ -30,9 +29,8 @@ class GlfwWindow {
         GlfwWindow& operator=(const GlfwWindow&) = delete;
         GlfwWindow& operator=(const GlfwWindow&&) = delete;
 
-        ResizeCallbackCookie registerResizeCallback(std::function<void(int,int)> changeNotify,
+        std::function<void(void)> registerResizeCallback(std::function<void(int,int)> changeNotify,
                 std::function<void(void)> destructNotify);
-        void unregisterResizeCallback(const ResizeCallbackCookie& c);
         bool shouldClose(void);
         void swapBuffers(void);
         struct WindowSize getWindowSize(void);

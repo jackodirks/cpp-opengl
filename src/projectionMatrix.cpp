@@ -18,14 +18,13 @@ ProjectionMatrix& ProjectionMatrix::operator=(const ProjectionMatrix& other)
 void ProjectionMatrix::registerWindowResizeCallback(GlfwWindow& window)
 {
     unregister();
-    GlfwWindow::ResizeCallbackCookie resizeCallbackCookie = window.registerResizeCallback(
+    unregisterFunction = window.registerResizeCallback(
         [this](int w, int h) {
             this->setWindowSize(static_cast<float>(w), static_cast<float>(h));
         },
         [this]() {
             this->unregisterFunction = 0;
         });
-    unregisterFunction = [resizeCallbackCookie, &window]() { window.unregisterResizeCallback(resizeCallbackCookie);};
 }
 
 void ProjectionMatrix::unregister(void)

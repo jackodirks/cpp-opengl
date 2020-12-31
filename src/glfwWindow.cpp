@@ -56,15 +56,10 @@ GlfwWindow::~GlfwWindow()
     glfwDestroyWindow(window);
 }
 
-GlfwWindow::ResizeCallbackCookie GlfwWindow::registerResizeCallback(std::function<void(int,int)> changeNotify, std::function<void(void)> destructNotify)
+std::function<void(void)> GlfwWindow::registerResizeCallback(std::function<void(int,int)> changeNotify, std::function<void(void)> destructNotify)
 {
     resizeCallbackList.push_front(std::make_pair(changeNotify, destructNotify));
-    return resizeCallbackList.cbegin();
-}
-
-void GlfwWindow::unregisterResizeCallback(const ResizeCallbackCookie& c)
-{
-    resizeCallbackList.erase(c);
+    return [cookie = resizeCallbackList.cbegin(), this]() {this->resizeCallbackList.erase(cookie);};
 }
 
 bool GlfwWindow::shouldClose(void)
