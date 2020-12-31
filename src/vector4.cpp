@@ -3,11 +3,6 @@
 
 #include "vector4.hpp"
 
-Vector4::Vector4(void)
-{
-   this->vec = {};
-}
-
 Vector4::Vector4(const std::array<float, 4> &vector)
 {
     this->vec = vector;
