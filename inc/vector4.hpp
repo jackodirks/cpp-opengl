@@ -3,7 +3,7 @@
 
 #include <array>
 
-/**Represents a vector with 4 elements of type float.*/
+/**Represents a 4x1 vector of type float.*/
 class Vector4 {
     protected:
         std::array<float, 4> vec;
