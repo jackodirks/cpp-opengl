@@ -1,6 +1,9 @@
 #ifndef GL_ERROR_TO_STRING_H
 #define GL_ERROR_TO_STRING_H
 
+/**@brief A helper function to translate GLenums representing erros to strings
+ * @return The name of the macro as a NUL-terminated string (GL_NO_ERROR, GL_INVALID_ENUM, etcetera) or UNKOWN ERROR.
+ */
 inline const char* glErrorToString(const GLenum err)
 {
     switch (err) {
