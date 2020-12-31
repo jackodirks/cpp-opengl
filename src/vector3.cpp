@@ -1,8 +1,5 @@
 #include "vector3.hpp"
 
-Vector3::Vector3() : Vector4()
-{}
-
 Vector3::Vector3(const float x, const float y, const float z)
     : Vector4(x, y, z, 0)
 {}
