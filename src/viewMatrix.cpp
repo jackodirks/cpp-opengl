@@ -8,10 +8,10 @@ Matrix4 ViewMatrix::getLookAtMatrix(void)
     Vector3 cameraDirection = this->cameraPos - center;
     cameraDirection.normalize();
 
-    Vector3 cameraRight = this->cameraUp.crossProduct(cameraDirection);
+    Vector3 cameraRight = Vector3::crossProduct(cameraUp, cameraDirection);
     cameraRight.normalize();
 
-    Vector3 cameraUp = cameraDirection.crossProduct(cameraRight);
+    Vector3 cameraUp = Vector3::crossProduct(cameraDirection, cameraRight);
 
     Matrix4 axisMat({
         cameraRight.x(),        cameraRight.y(),        cameraRight.z(),        0,
@@ -60,7 +60,7 @@ void ViewMatrix::move(const ViewMatrix::MoveDirections direction, const float de
             break;
         case MoveDirections::Left:
             {
-                Vector3 cross = this->cameraFront.crossProduct(this->cameraUp);
+                Vector3 cross = Vector3::crossProduct(this->cameraFront, this->cameraUp);
                 cross.normalize();
                 cross *= cameraSpeed;
                 this->cameraPos -= cross;
@@ -68,7 +68,7 @@ void ViewMatrix::move(const ViewMatrix::MoveDirections direction, const float de
             break;
         case MoveDirections::Right:
             {
-                Vector3 cross = this->cameraFront.crossProduct(this->cameraUp);
+                Vector3 cross = Vector3::crossProduct(this->cameraFront, this->cameraUp);
                 cross.normalize();
                 cross *= cameraSpeed;
                 this->cameraPos += cross;
