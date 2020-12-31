@@ -55,13 +55,6 @@ Vector4& Vector4::operator-=(const Vector4 &vec4)
     return *this;
 }
 
-void Vector4::print(void)
-{
-    for(const float &f : this->vec) {
-        std::cout << f << std::endl;
-    }
-}
-
 Vector4 operator*(Vector4 lhs, const float rhs)
 {
     lhs *= rhs;

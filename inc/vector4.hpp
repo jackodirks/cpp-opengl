@@ -15,8 +15,6 @@ class Vector4 {
         Vector4& operator*=(const float f);
         Vector4& operator+=(const Vector4 &vec4);
         Vector4& operator-=(const Vector4 &vec4);
-
-        void print(void);
 };
 
 Vector4 operator*(Vector4 lhs, const float rhs);
