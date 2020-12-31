@@ -16,6 +16,15 @@ class Vector4 {
          * See also: std::array::data.*/
         const float* data(void) const noexcept;
 
+        /**@return vec[0]*/
+        const float x() const;
+        /**@return vec[1]*/
+        const float y() const;
+        /**@return vec[2]*/
+        const float z() const;
+        /**@return vec[3]*/
+        const float w() const;
+
         /**Normalize the vector. A normalized vector has a length of 1 (sqrt(a^2 + b^2 + c^2 + ..) = 1).*/
         Vector4& normalize(void);
         /**Multiply every element of this Vector4 with f.*/

@@ -18,6 +18,26 @@ const float* Vector4::data(void) const noexcept
     return this->vec.data();
 }
 
+const float Vector4::x() const
+{
+    return vec[0];
+}
+
+const float Vector4::y() const
+{
+    return vec[1];
+}
+
+const float Vector4::z() const
+{
+    return vec[2];
+}
+
+const float Vector4::w() const
+{
+    return vec[3];
+}
+
 Vector4& Vector4::normalize(void)
 {
     float unit = 0;
