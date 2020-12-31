@@ -5,12 +5,7 @@
 void GlfwWindow::setFramebufferSizeCallback(GLFWwindow *window, int width, int height)
 {
     GlfwWindow *glfwWindow = static_cast<GlfwWindow*>(glfwGetWindowUserPointer(window));
-    glfwWindow->windowDidResize(width, height);
-}
-
-void GlfwWindow::windowDidResize(int width, int height)
-{
-    for (std::pair<std::function<void(int, int)>, std::function<void(void)>> p : resizeCallbackList) {
+    for (std::pair<std::function<void(int, int)>, std::function<void(void)>> p : glfwWindow->resizeCallbackList) {
         std::get<0>(p)(width, height);
     }
     glViewport(0, 0, width, height);

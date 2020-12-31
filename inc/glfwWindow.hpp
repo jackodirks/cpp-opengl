@@ -13,7 +13,6 @@ class GlfwWindow {
         std::list<std::pair<std::function<void(int, int)>, std::function<void(void)>>> resizeCallbackList;
 
         static void setFramebufferSizeCallback(GLFWwindow* window, int width, int height);
-        void windowDidResize(int width, int height);
     public:
         struct WindowSize {
             int width;
