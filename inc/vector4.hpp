@@ -3,22 +3,33 @@
 
 #include <array>
 
+/**Represents a vector with 4 elements of type float.*/
 class Vector4 {
     protected:
         std::array<float, 4> vec;
     public:
-        Vector4(const std::array<float, 4> &vector);
+        /**Construct a Vector4 from up to four values. Also serves as the default constructor.*/
         Vector4(const float x = 0, const float y = 0, const float z = 0, const float w = 0);
+        /**Construct a Vector4 from an array.*/
+        Vector4(const std::array<float, 4> &vector);
+        /**Return a pointer to a c-style array containing the current data in this vector.
+         * See also: std::array::data.*/
         const float* data(void) const noexcept;
-        Vector4& normalize(void);
 
+        /**Normalize the vector. A normalized vector has a length of 1 (sqrt(a^2 + b^2 + c^2 + ..) = 1).*/
+        Vector4& normalize(void);
+        /**Multiply every element of this Vector4 with f.*/
         Vector4& operator*=(const float f);
+        /**Add another Vector4 to this one.*/
         Vector4& operator+=(const Vector4 &vec4);
+        /**Subtract another Vector4 from this one.*/
         Vector4& operator-=(const Vector4 &vec4);
 };
-
+/**Create a new Vector4 from multiplication. See also: Vector4::operator*=.*/
 Vector4 operator*(Vector4 lhs, const float rhs);
+/**Create a new Vector4 from addition. See also: Vector4::operator+=.*/
 Vector4 operator+(Vector4 lhs, const Vector4 &rhs);
+/**Create a new Vector4 from subtraction. See also: Vector4::operator-=.*/
 Vector4 operator-(Vector4 lhs, const Vector4 &rhs);
 
 #endif //VECTOR4_HPP
