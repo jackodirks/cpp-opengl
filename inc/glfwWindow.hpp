@@ -15,7 +15,7 @@ class GlfwWindow {
         std::list<std::pair<std::function<void(int, int)>, std::function<void(void)>>> resizeCallbackList;
 
         /**This function is registered using glfwSetFramebufferSizeCallback as callback.*/
-        static void setFramebufferSizeCallback(GLFWwindow* window, int width, int height);
+        static void resizeCallbackFun(GLFWwindow* window, int width, int height);
     public:
         /**See GlfwWindow::getWindowSize.*/
         struct WindowSize {

@@ -2,7 +2,7 @@
 
 #include "glfwWindow.hpp"
 
-void GlfwWindow::setFramebufferSizeCallback(GLFWwindow *window, int width, int height)
+void GlfwWindow::resizeCallbackFun(GLFWwindow *window, int width, int height)
 {
     GlfwWindow *glfwWindow = static_cast<GlfwWindow*>(glfwGetWindowUserPointer(window));
     for (std::pair<std::function<void(int, int)>, std::function<void(void)>> p : glfwWindow->resizeCallbackList) {
@@ -40,7 +40,7 @@ GlfwWindow::GlfwWindow(int width, int height, const std::string title, GLFWmonit
         throw std::runtime_error("gladLoadGLLoader failed");
     }
     glfwSetWindowUserPointer(window, this);
-    glfwSetFramebufferSizeCallback(window, GlfwWindow::setFramebufferSizeCallback);
+    glfwSetFramebufferSizeCallback(window, GlfwWindow::resizeCallbackFun);
 }
 
 GlfwWindow::~GlfwWindow()
