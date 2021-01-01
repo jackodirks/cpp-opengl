@@ -54,7 +54,13 @@ GlfwWindow::~GlfwWindow()
 std::function<void(void)> GlfwWindow::registerResizeCallback(std::function<void(int,int)> changeNotify, std::function<void(void)> destructNotify)
 {
     resizeCallbackList.push_front(std::make_pair(changeNotify, destructNotify));
-    return [cookie = resizeCallbackList.cbegin(), this]() {this->resizeCallbackList.erase(cookie);};
+    return [cookie = resizeCallbackList.cbegin(), this]() {
+        static bool called = false;
+        if (called)
+            throw std::runtime_error("This function can only be called once.");
+        called = true;
+        this->resizeCallbackList.erase(cookie);
+    };
 }
 
 bool GlfwWindow::shouldClose(void)
