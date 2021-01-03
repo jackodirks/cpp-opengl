@@ -25,6 +25,11 @@ class GlfwWindow {
             int width;
             int height;
         };
+        /**See GlfwWindow::getCursorPosition*/
+        struct CursorPosition {
+            double xpos;
+            double ypos;
+        };
 
         /**Default constructor. Explicit to prevent GlfwWindow a = 5 shenanigans
          * See the documentation of glfwCreateWindow for more information.
@@ -77,7 +82,9 @@ class GlfwWindow {
         /**See glfwSwapBuffers.*/
         void swapBuffers(void);
         /**See glfwGetWindowSize.*/
-        struct WindowSize getWindowSize(void);
+        const struct WindowSize getWindowSize(void);
+        /**See glfwGetCursorPos*/
+        const struct CursorPosition getCursorPosition(void);
 };
 
 #endif //GLFW_WINDOW_HPP

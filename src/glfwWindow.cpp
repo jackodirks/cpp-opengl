@@ -98,9 +98,16 @@ void GlfwWindow::swapBuffers(void)
     glfwSwapBuffers(window);
 }
 
-struct GlfwWindow::WindowSize GlfwWindow::getWindowSize(void)
+const struct GlfwWindow::WindowSize GlfwWindow::getWindowSize(void)
 {
     struct GlfwWindow::WindowSize windowSize;
     glfwGetWindowSize(window, &windowSize.width, &windowSize.height);
     return windowSize;
+}
+
+const struct GlfwWindow::CursorPosition GlfwWindow::getCursorPosition(void)
+{
+    struct GlfwWindow::CursorPosition cursorPos;
+    glfwGetCursorPos(window, &cursorPos.xpos, &cursorPos.ypos);
+    return cursorPos;
 }
