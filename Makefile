@@ -24,8 +24,8 @@ DEBUG_TARGET := final_debug
 
 all: release debug
 
-release: CFLAGS += -O2 -march=native
-release: CXXFLAGS += -O2 -march=native
+release: CFLAGS += -O2 -march=native -Werror
+release: CXXFLAGS += -O2 -march=native -Werror
 release: $(RELEASE_TARGET)
 
 debug: CFLAGS += -Og -ggdb
