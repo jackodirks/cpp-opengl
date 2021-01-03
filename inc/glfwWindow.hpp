@@ -44,14 +44,14 @@ class GlfwWindow {
         /**@brief Used to register an std::function which will be called after GLFW calls the frameBufferSizeCallback.
          *
          * It is a somewhat complex setup which utilizes three functions, two for administration and one as the actual callback.
-         * If you no longer whish to receive frammeBufferSizeCallback events, you need to call the function returned from this one.
+         * If you no longer whish to receive frameBufferSizeCallback events, you need to call the function returned from this one.
          * If this object destructs, it will call the destructNotify. After the destructNotify was called, you are no longer allowed to call the function returned from this method.
          * See also: GLFWframebuffersizefun.
          *
-         * @param changeNotify This function is called when frammeBufferSizeCallback fires. It needs to accept two parameters: int width and int height.
+         * @param changeNotify This function is called when frameBufferSizeCallback fires. It needs to accept two parameters: int width and int height.
          * @param destructNotify After this function has been called, the function returned from here can no longer be called, and the changeNotify function will never be called again.
          * @return A function which can be used to inform this GlfwWindow that the related changeNotify may never be called again.
-         * @warning Do not call the function returned from this function after the destructNotify function has been called.
+         * @warning Do not call the function returned from this function after the destructNotify function has been called. Doing this will lead to undefined behaviour.
          * @warning If the function returned from this method is called more than once, it will throw an exception.
          */
         std::function<void(void)> registerResizeCallback(std::function<void(int,int)> changeNotify, std::function<void(void)> destructNotify);
