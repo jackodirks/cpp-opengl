@@ -88,6 +88,12 @@ Vector4 operator*(Vector4 lhs, const float rhs)
     return lhs;
 }
 
+Vector4 operator*(const float lhs, Vector4 rhs)
+{
+    rhs *= lhs;
+    return rhs;
+}
+
 Vector4 operator+(Vector4 lhs, const Vector4 &rhs)
 {
     lhs += rhs;

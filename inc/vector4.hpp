@@ -39,6 +39,8 @@ class Vector4 {
 };
 /**Create a new Vector4 from multiplication. See also: Vector4::operator*=.*/
 Vector4 operator*(Vector4 lhs, const float rhs);
+/**Create a new Vector4 from multiplication. See also: Vector4::operator*=.*/
+Vector4 operator*(const float lhs, Vector4 rhs);
 /**Create a new Vector4 from addition. See also: Vector4::operator+=.*/
 Vector4 operator+(Vector4 lhs, const Vector4 &rhs);
 /**Create a new Vector4 from subtraction. See also: Vector4::operator-=.*/
