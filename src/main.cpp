@@ -89,6 +89,7 @@ int main() {
     glEnableVertexAttribArray(0);
 
     ViewMatrix viewMatrix;
+    viewMatrix.registerWithGlfwWindow(window);
     GlfwWindow::WindowSize size = window.getWindowSize();
     PerspectiveProjectionMatrix projectionMatrix(DEGREES_TO_RADIANS(45.0), size.width, size.height, 0.1, 100);
     OpenGlMatrix modelMatrix;
@@ -99,6 +100,8 @@ int main() {
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        // Update the viewMatrix
+        viewMatrix.update();
         // Draw the cube
         shader.use();
         // Copy the matrices
