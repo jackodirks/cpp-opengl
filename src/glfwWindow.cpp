@@ -11,6 +11,14 @@ void GlfwWindow::resizeCallbackFun(GLFWwindow *window, int width, int height)
     glViewport(0, 0, width, height);
 }
 
+void GlfwWindow::keyCallbackFun(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    GlfwWindow *glfwWindow = static_cast<GlfwWindow*>(glfwGetWindowUserPointer(window));
+    for (std::pair<std::function<void(int, int, int, int)>, std::function<void(void)>> p : glfwWindow->keyCallbackList) {
+        std::get<0>(p)(key, scancode, action, mods);
+    }
+}
+
 GlfwWindow::GlfwWindow(int width, int height, const std::string title, GLFWmonitor* monitor, GlfwWindow* share)
 {
     GLFWwindow *s = nullptr;
@@ -41,11 +49,15 @@ GlfwWindow::GlfwWindow(int width, int height, const std::string title, GLFWmonit
     }
     glfwSetWindowUserPointer(window, this);
     glfwSetFramebufferSizeCallback(window, GlfwWindow::resizeCallbackFun);
+    glfwSetKeyCallback(window, GlfwWindow::keyCallbackFun);
 }
 
 GlfwWindow::~GlfwWindow()
 {
-    for (std::pair<std::function<void(int, int)>, std::function<void(void)>> p : resizeCallbackList) {
+    for (auto p : resizeCallbackList) {
+        std::get<1>(p)();
+    }
+    for (auto p : keyCallbackList) {
         std::get<1>(p)();
     }
     glfwDestroyWindow(window);
@@ -60,6 +72,19 @@ std::function<void(void)> GlfwWindow::registerResizeCallback(std::function<void(
             throw std::runtime_error("This function can only be called once.");
         called = true;
         this->resizeCallbackList.erase(cookie);
+    };
+}
+
+
+std::function<void(void)> GlfwWindow::registerKeyCallback(std::function<void(int,int,int,int)> changeNotify, std::function<void(void)> destructNotify)
+{
+    keyCallbackList.push_front(std::make_pair(changeNotify, destructNotify));
+    return [cookie = keyCallbackList.cbegin(), this]() {
+        static bool called = false;
+        if (called)
+            throw std::runtime_error("This function can only be called once.");
+        called = true;
+        this->keyCallbackList.erase(cookie);
     };
 }
 
