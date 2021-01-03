@@ -5,7 +5,7 @@ ProjectionMatrix::~ProjectionMatrix()
     unregister();
 }
 
-ProjectionMatrix::ProjectionMatrix(const ProjectionMatrix&)
+ProjectionMatrix::ProjectionMatrix(const ProjectionMatrix&) : unregisterFunction(0)
 {}
 
 ProjectionMatrix& ProjectionMatrix::operator=(const ProjectionMatrix& other)
