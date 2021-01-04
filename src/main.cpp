@@ -70,6 +70,7 @@ int main() {
             std::exit(EXIT_FAILURE);
         }
     }();
+    window.setCursorMode(GlfwWindow::MouseCursorMode::disabled);
     glEnable(GL_DEPTH_TEST);
     ShaderProgram shader = []() -> ShaderProgram {
         try {

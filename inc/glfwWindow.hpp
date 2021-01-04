@@ -30,6 +30,12 @@ class GlfwWindow {
             double xpos;
             double ypos;
         };
+        /**See GlfwWindow::setCursorMode*/
+        enum class MouseCursorMode {
+            normal,
+            hidden,  /**Normal, but hidden*/
+            disabled /**No mouse cursor at all*/
+        };
 
         /**Default constructor. Explicit to prevent GlfwWindow a = 5 shenanigans
          * See the documentation of glfwCreateWindow for more information.
@@ -85,6 +91,9 @@ class GlfwWindow {
         const struct WindowSize getWindowSize(void);
         /**See glfwGetCursorPos*/
         const struct CursorPosition getCursorPosition(void);
+        /**Set a new mouse cursor mode (normal, hidden or disabled).
+         * See also: glfwSetInputMode and GlfwWindow::MouseCursorMode*/
+        void setCursorMode(MouseCursorMode newMode);
 };
 
 #endif //GLFW_WINDOW_HPP

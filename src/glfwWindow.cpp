@@ -111,3 +111,20 @@ const struct GlfwWindow::CursorPosition GlfwWindow::getCursorPosition(void)
     glfwGetCursorPos(window, &cursorPos.xpos, &cursorPos.ypos);
     return cursorPos;
 }
+
+void GlfwWindow::setCursorMode(GlfwWindow::MouseCursorMode newMode)
+{
+    int value = GLFW_CURSOR_NORMAL;
+    switch(newMode) {
+        case GlfwWindow::MouseCursorMode::normal:
+            value = GLFW_CURSOR_NORMAL;
+            break;
+        case GlfwWindow::MouseCursorMode::hidden:
+            value = GLFW_CURSOR_HIDDEN;
+            break;
+        case GlfwWindow::MouseCursorMode::disabled:
+            value = GLFW_CURSOR_DISABLED;
+            break;
+    }
+    glfwSetInputMode(window, GLFW_CURSOR, value);
+}
