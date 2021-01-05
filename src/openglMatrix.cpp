@@ -49,6 +49,7 @@ Matrix4 OpenGlMatrix::getCombinedMatrix(void) const
     Matrix4 mat4 = toScaleMatrix(this->scaling);
     mat4 *= toRotationMatrix(this->rotation);
     mat4 *= toTranslationMatrix(this->translation);
+    mat4 *= toRotationMatrix(this->lateRotation);
     return mat4;
 }
 
@@ -56,6 +57,7 @@ OpenGlMatrix::OpenGlMatrix()
 {
     this->translation = Vector3();
     this->rotation = Vector3();
+    this->lateRotation = Vector3();
     this->scaling = Vector3(1, 1, 1);
     this->mat = Matrix4();
 }
@@ -69,6 +71,12 @@ OpenGlMatrix& OpenGlMatrix::addTranslate(const float x, const float y, const flo
 OpenGlMatrix& OpenGlMatrix::addRotate(const float x, const float y, const float z)
 {
     this->rotation += Vector3(x,y,z);
+    return *this;
+}
+
+OpenGlMatrix& OpenGlMatrix::addLateRotate(const float x, const float y, const float z)
+{
+    this->lateRotation += Vector3(x,y,z);
     return *this;
 }
 
@@ -87,6 +95,12 @@ OpenGlMatrix& OpenGlMatrix::setTranslate(const float x, const float y, const flo
 OpenGlMatrix& OpenGlMatrix::setRotate(const float x, const float y, const float z)
 {
     this->rotation = Vector3(x,y,z);
+    return *this;
+}
+
+OpenGlMatrix& OpenGlMatrix::setLateRotate(const float x, const float y, const float z)
+{
+    this->lateRotation = Vector3(x,y,z);
     return *this;
 }
 
