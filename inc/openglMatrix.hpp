@@ -10,9 +10,9 @@ class OpenGlMatrix {
         Vector3 rotation;
         Vector3 scaling;
         Matrix4 mat;
-        Matrix4 getRotationMatrix(void) const;
-        Matrix4 getTranslationMatrix(void) const;
-        Matrix4 getScaleMatrix(void) const;
+        Matrix4 toRotationMatrix(const Vector3 &vec) const;
+        Matrix4 toTranslationMatrix(const Vector3 &vec) const;
+        Matrix4 toScaleMatrix(const Vector3 &vec) const;
         Matrix4 getCombinedMatrix(void) const;
     public:
         OpenGlMatrix();

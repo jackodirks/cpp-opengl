@@ -2,9 +2,8 @@
 
 #include "openglMatrix.hpp"
 
-Matrix4 OpenGlMatrix::getRotationMatrix(void) const
+Matrix4 OpenGlMatrix::toRotationMatrix(const Vector3 &vec) const
 {
-    const Vector3 &vec = this->rotation;
     float x = vec.x();
     float y = vec.y();
     float z = vec.z();
@@ -17,9 +16,8 @@ Matrix4 OpenGlMatrix::getRotationMatrix(void) const
 
 }
 
-Matrix4 OpenGlMatrix::getTranslationMatrix(void) const
+Matrix4 OpenGlMatrix::toTranslationMatrix(const Vector3 &vec) const
 {
-    const Vector3 &vec = this->translation;
     float x = vec.x();
     float y = vec.y();
     float z = vec.z();
@@ -31,9 +29,8 @@ Matrix4 OpenGlMatrix::getTranslationMatrix(void) const
     });
 }
 
-Matrix4 OpenGlMatrix::getScaleMatrix(void) const
+Matrix4 OpenGlMatrix::toScaleMatrix(const Vector3 &vec) const
 {
-    const Vector3 &vec = this->scaling;
     float x = vec.x();
     float y = vec.y();
     float z = vec.z();
@@ -49,10 +46,9 @@ Matrix4 OpenGlMatrix::getCombinedMatrix(void) const
 {
     // scale, rotate, translate
     // Default constructor creates identity matrix.
-    Matrix4 mat4;
-    mat4 *= getScaleMatrix();
-    mat4 *= getRotationMatrix();
-    mat4 *= getTranslationMatrix();
+    Matrix4 mat4 = toScaleMatrix(this->scaling);
+    mat4 *= toRotationMatrix(this->rotation);
+    mat4 *= toTranslationMatrix(this->translation);
     return mat4;
 }
 
