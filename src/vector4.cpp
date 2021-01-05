@@ -46,7 +46,7 @@ Vector4& Vector4::normalize(void)
     }
     unit = std::sqrt(unit);
     for (size_t i = 0; i < this->vec.size(); ++i) {
-        this->vec[i] *= unit;
+        this->vec[i] /= unit;
     }
     return *this;
 }
