@@ -29,7 +29,7 @@ class Vector4 {
         float operator[](const std::size_t i);
 
         /**Normalize the vector. A normalized vector has a length of 1 (sqrt(a^2 + b^2 + c^2 + ..) = 1).*/
-        Vector4& normalize(void);
+        static Vector4 normalize(Vector4 vec);
         /**Multiply every element of this Vector4 with f.*/
         Vector4& operator*=(const float f);
         /**Add another Vector4 to this one.*/

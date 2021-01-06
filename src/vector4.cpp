@@ -38,17 +38,17 @@ const float Vector4::w() const
     return vec[3];
 }
 
-Vector4& Vector4::normalize(void)
+Vector4 Vector4::normalize(Vector4 vec)
 {
     float unit = 0;
-    for(const float &f : this->vec) {
+    for(const float &f : vec.vec) {
         unit += f*f;
     }
     unit = std::sqrt(unit);
-    for (size_t i = 0; i < this->vec.size(); ++i) {
-        this->vec[i] /= unit;
+    for (size_t i = 0; i < 4; ++i) {
+        vec.vec[i] /= unit;
     }
-    return *this;
+    return vec;
 }
 
 Vector4& Vector4::operator*=(const float f)

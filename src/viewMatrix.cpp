@@ -33,11 +33,9 @@ void ViewMatrix::processKeyPress(const int key, const int scancode, const int ac
 Matrix4 ViewMatrix::getLookAtMatrix(void)
 {
     Vector3 center = this->cameraPos + this->cameraFront;
-    Vector3 cameraDirection = this->cameraPos - center;
-    cameraDirection.normalize();
+    Vector3 cameraDirection = Vector3::normalize(this->cameraPos - center);
 
-    Vector3 cameraRight = Vector3::crossProduct(cameraUp, cameraDirection);
-    cameraRight.normalize();
+    Vector3 cameraRight = Vector3::normalize(Vector3::crossProduct(cameraUp, cameraDirection));
 
     Vector3 cameraUp = Vector3::crossProduct(cameraDirection, cameraRight);
 
@@ -89,8 +87,7 @@ void ViewMatrix::update(void)
     // cameraFront = getCameraFront();
 
     float cameraSpeed = this->moveSpeed * deltaTime;
-    Vector3 leftRightDirection = Vector3::crossProduct(this->cameraFront, this->cameraUp);
-    leftRightDirection.normalize();
+    Vector3 leftRightDirection = Vector3::normalize(Vector3::crossProduct(cameraDirection, worldUp));
     // Note that (int)bool is either 0 or 1 (false or true, resp.). The result of this operation is thus -1, 0 or 1.
     int upDownMovement = static_cast<int>(this->upActive) - static_cast<int>(this->downActive);
     // Right is the positive direction, left the negative.
