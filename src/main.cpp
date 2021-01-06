@@ -94,6 +94,7 @@ int main() {
     GlfwWindow::WindowSize size = window.getWindowSize();
     PerspectiveProjectionMatrix projectionMatrix(DEGREES_TO_RADIANS(45.0), size.width, size.height, 0.1, 100);
     OpenGlMatrix modelMatrix;
+    modelMatrix.setScale(0.5, 0.5, 0.5);
     projectionMatrix.registerWindowResizeCallback(window);
 
     while(!window.shouldClose()) {
@@ -112,18 +113,20 @@ int main() {
         shader.setUniformMatrix4v("projection", 1, true, projectionMatrix.data());
         glBindVertexArray(cubeVAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
-        modelMatrix.setTranslate(1.25);
+        modelMatrix.setTranslate(1.5);
         shader.setUniformMatrix4v("model", 1, true, modelMatrix.data());
         glDrawArrays(GL_TRIANGLES, 0, 36);
-        modelMatrix.setTranslate(-1.25);
+        modelMatrix.setTranslate(-1.5);
         shader.setUniformMatrix4v("model", 1, true, modelMatrix.data());
         glDrawArrays(GL_TRIANGLES, 0, 36);
-        modelMatrix.setTranslate(0, -1.25);
+        modelMatrix.setTranslate(0, -1.5);
         shader.setUniformMatrix4v("model", 1, true, modelMatrix.data());
         glDrawArrays(GL_TRIANGLES, 0, 36);
-        modelMatrix.setTranslate(0, 1.25);
+        modelMatrix.setTranslate(0, 1.5);
         shader.setUniformMatrix4v("model", 1, true, modelMatrix.data());
         glDrawArrays(GL_TRIANGLES, 0, 36);
+        modelMatrix.addLateRotate(0,0, 2*M_PI/900);
+        modelMatrix.addRotate(0, 2*M_PI/900, 0);
 
         window.swapBuffers();
         glfwPollEvents();
