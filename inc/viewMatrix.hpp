@@ -11,22 +11,27 @@ class ViewMatrix {
         bool downActive;
         bool leftActive;
         bool rightActive;
-        Vector3 cameraPos;
-        Vector3 cameraFront;
-        Vector3 cameraUp;
         Matrix4 lookAtMatrix;
-        float yaw;
-        float pitch;
         const float sensitivity;
         const float moveSpeed;
-
-        Matrix4 getLookAtMatrix(void);
-        Vector3 getCameraFront(void);
-        void processKeyPress(const int key, const int scancode, const int action, const int mods);
+        GlfwWindow* glfwWindow;
+        bool mouseCursorInFocus;
         std::function<void(void)> keyCallbackUnregisterFunction;
+
+        float prevTime;
+        double prevXpos;
+        double prevYpos;
+        double yaw;
+        double pitch;
+        const double pitchLimit;
+        Vector3 cameraPos;
+
+        void processKeyPress(const int key, const int scancode, const int action, const int mods);
+        void unregisterGlfwWindow(void);
+        Vector3 getCameraFront(const float pitch, const float yaw);
+        Matrix4 getLookAtMatrix(const Vector3 &worldUp, const Vector3 &cameraDirection, const Vector3 &cameraPos);
     public:
-        explicit ViewMatrix(const float sensitivity = 0.1, const float moveSpeed = 2.5);
-        //void processMouseMovement(const float xPos, const float yPos);
+        explicit ViewMatrix(const float sensitivity = 0.001, const float moveSpeed = 2.5);
         void update(void);
         void registerWithGlfwWindow(GlfwWindow& w);
         const float* data(void) noexcept;

@@ -30,73 +30,92 @@ void ViewMatrix::processKeyPress(const int key, const int scancode, const int ac
     }
 }
 
-Matrix4 ViewMatrix::getLookAtMatrix(void)
+Vector3 ViewMatrix::getCameraFront(const float pitch, const float yaw)
 {
-    Vector3 center = this->cameraPos + this->cameraFront;
-    Vector3 cameraDirection = Vector3::normalize(this->cameraPos - center);
+    float x = std::cos(yaw) * std::cos(pitch);
+    float y = std::sin(pitch);
+    float z = std::sin(yaw) * std::cos(pitch);
+    // CameraFront is the rotation of the camera.
+    return Vector3::normalize(Vector3(x, y, z));
+}
 
-    Vector3 cameraRight = Vector3::normalize(Vector3::crossProduct(cameraUp, cameraDirection));
-
-    Vector3 cameraUp = Vector3::crossProduct(cameraDirection, cameraRight);
-
+Matrix4 ViewMatrix::getLookAtMatrix(const Vector3 &worldUp, const Vector3 &cameraDirection, const Vector3 &cameraPos)
+{
+    Vector3 cameraRight = Vector3::normalize(Vector3::crossProduct(worldUp, cameraDirection));
+    Vector3 cameraUp = Vector3::normalize(Vector3::crossProduct(cameraDirection, cameraRight));
     Matrix4 axisMat({
         cameraRight.x(),        cameraRight.y(),        cameraRight.z(),        0,
         cameraUp.x(),           cameraUp.y(),           cameraUp.z(),           0,
         cameraDirection.x(),    cameraDirection.y(),    cameraDirection.z(),    0,
         0,                      0,                      0,                      1,
     });
-
     Matrix4 posMat({
-        1,  0,  0,  -this->cameraPos.x(),
-        0,  1,  0,  -this->cameraPos.y(),
-        0,  0,  1,  -this->cameraPos.z(),
+        1,  0,  0,  -cameraPos.x(),
+        0,  1,  0,  -cameraPos.y(),
+        0,  0,  1,  -cameraPos.z(),
         0,  0,  0,  1,
     });
-
     return axisMat * posMat;
 }
 
-Vector3 ViewMatrix::getCameraFront(void)
+ViewMatrix::ViewMatrix(const float sensitivity, const float moveSpeed) : sensitivity(sensitivity), moveSpeed(moveSpeed), pitchLimit(89.0*M_PI/180.0)
 {
-    float x = std::cos(yaw) * std::cos(pitch);
-    float y = std::sin(pitch);
-    float z = std::sin(yaw) * std::cos(pitch);
-    return Vector3(x,y,z);
-}
-
-ViewMatrix::ViewMatrix(const float sensitivity, const float moveSpeed) : sensitivity(sensitivity), moveSpeed(moveSpeed)
-{
-    cameraPos = Vector3(0, 0, 3);
-    cameraUp = Vector3(0, 1, 0);
-    yaw = -M_PI / 2;
-    pitch = 0;
-    cameraFront = getCameraFront();
-    lookAtMatrix = getLookAtMatrix();
     upActive = downActive = leftActive = rightActive = false;
     keyCallbackUnregisterFunction = 0;
+    glfwWindow = nullptr;
+    mouseCursorInFocus = false;
+
+    prevTime = 0;
+    prevXpos = 0;
+    prevYpos = 0;
+    yaw = (90.0 * M_PI)/180.0; // 90 degrees
+    pitch = 0;
+    cameraPos = Vector3(0, 0, 3);
+
+    // Update sets the lookAtMatrix.
+    update();
 }
 
 void ViewMatrix::update(void)
 {
-    static float prevTime = 0;
+    // World up is a definition
+    const Vector3 worldUp = Vector3(0, 1, 0);
+
     float currentTime = glfwGetTime();
     float deltaTime = currentTime - prevTime;
     prevTime = currentTime;
 
-    // TODO: camera orientation (mouse movement) must come first.
-    // cameraFront = getCameraFront();
+    if (glfwWindow != nullptr) {
+        const GlfwWindow::CursorPosition mousePos = glfwWindow->getCursorPosition();
+        if (mouseCursorInFocus) {
+            double xOffset = (mousePos.xpos - prevXpos) * sensitivity;
+            double yOffset = (mousePos.ypos - prevYpos) * sensitivity;
+            yaw += xOffset;
+            pitch += yOffset;
+            if (pitch > pitchLimit) {
+                pitch = pitchLimit;
+            } else if (pitch < -pitchLimit) {
+                pitch = -pitchLimit;
+            }
+        }
+        mouseCursorInFocus = true;
+        prevXpos = mousePos.xpos;
+        prevYpos = mousePos.ypos;
+    }
+    const Vector3 cameraDirection = getCameraFront(pitch, yaw);
+    const float cameraSpeed = moveSpeed * deltaTime;
 
-    float cameraSpeed = this->moveSpeed * deltaTime;
     Vector3 leftRightDirection = Vector3::normalize(Vector3::crossProduct(cameraDirection, worldUp));
     // Note that (int)bool is either 0 or 1 (false or true, resp.). The result of this operation is thus -1, 0 or 1.
-    int upDownMovement = static_cast<int>(this->upActive) - static_cast<int>(this->downActive);
+    int upDownMovement = static_cast<int>(this->downActive) - static_cast<int>(this->upActive);
     // Right is the positive direction, left the negative.
-    int leftRightMovement = static_cast<int>(this->rightActive) - static_cast<int>(this->leftActive);
+    int leftRightMovement = static_cast<int>(this->leftActive) - static_cast<int>(this->rightActive);
     // Update the camera position
-    this->cameraPos += upDownMovement * this->cameraFront * cameraSpeed;
-    this->cameraPos += leftRightMovement * leftRightDirection * cameraSpeed;
+    cameraPos += upDownMovement * cameraDirection * cameraSpeed;
+    cameraPos += leftRightMovement * leftRightDirection * cameraSpeed;
+
     // Update the lookAtMatrix
-    lookAtMatrix = getLookAtMatrix();
+    lookAtMatrix = getLookAtMatrix(worldUp, cameraDirection, cameraPos);
 }
 
 void ViewMatrix::registerWithGlfwWindow(GlfwWindow &w)
@@ -106,6 +125,8 @@ void ViewMatrix::registerWithGlfwWindow(GlfwWindow &w)
             [this]() -> void {
                 this->keyCallbackUnregisterFunction = 0;
             });
+
+    glfwWindow = &w;
 }
 
 const float* ViewMatrix::data() noexcept
