@@ -27,8 +27,8 @@ class ViewMatrix {
 
         void processKeyPress(const int key, const int scancode, const int action, const int mods);
         void unregisterGlfwWindow(void);
-        Vector3 getCameraFront(const float pitch, const float yaw);
-        Matrix4 getLookAtMatrix(const Vector3 &worldUp, const Vector3 &cameraDirection, const Vector3 &cameraPos);
+        Vector3 getCameraFront(const float pitch, const float yaw) const;
+        Matrix4 getLookAtMatrix(const Vector3 &worldUp, const Vector3 &cameraDirection, const Vector3 &cameraPos) const;
     public:
         explicit ViewMatrix(const float sensitivity = 0.001, const float moveSpeed = 2.5);
         ~ViewMatrix(void);

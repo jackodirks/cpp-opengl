@@ -30,7 +30,7 @@ void ViewMatrix::processKeyPress(const int key, const int scancode, const int ac
     }
 }
 
-Vector3 ViewMatrix::getCameraFront(const float pitch, const float yaw)
+Vector3 ViewMatrix::getCameraFront(const float pitch, const float yaw) const
 {
     float x = std::cos(yaw) * std::cos(pitch);
     float y = std::sin(pitch);
@@ -48,7 +48,7 @@ void ViewMatrix::unregisterGlfwWindow(void)
     this->glfwWindow = nullptr;
 }
 
-Matrix4 ViewMatrix::getLookAtMatrix(const Vector3 &worldUp, const Vector3 &cameraDirection, const Vector3 &cameraPos)
+Matrix4 ViewMatrix::getLookAtMatrix(const Vector3 &worldUp, const Vector3 &cameraDirection, const Vector3 &cameraPos) const
 {
     Vector3 cameraRight = Vector3::normalize(Vector3::crossProduct(worldUp, cameraDirection));
     Vector3 cameraUp = Vector3::normalize(Vector3::crossProduct(cameraDirection, cameraRight));
