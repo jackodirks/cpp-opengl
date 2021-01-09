@@ -66,7 +66,7 @@ class GlfwWindow {
          * @param destructNotify After this function has been called, the function returned from here can no longer be called, and the changeNotify function will never be called again.
          * @return A function which can be used to inform this GlfwWindow that the related changeNotify may never be called again.
          * @warning Do not call the function returned from this function after the destructNotify function has been called. Doing this will lead to undefined behaviour.
-         * @warning If the function returned from this method is called more than once, it will throw an exception.
+         * @warning If the function returned from this method is called more than once, it will cause undefined behaviour.
          */
         std::function<void(void)> registerResizeCallback(std::function<void(int,int)> changeNotify, std::function<void(void)> destructNotify);
         /**@brief Used to register an std::function which will be called after GLFW calls the keyCallback.
@@ -80,7 +80,7 @@ class GlfwWindow {
          * @param destructNotify After this function has been called, the function returned from here can no longer be called, and the changeNotify function will never be called again.
          * @return A function which can be used to inform this GlfwWindow that the related changeNotify may never be called again.
          * @warning Do not call the function returned from this function after the destructNotify function has been called. Doing this will lead to undefined behaviour.
-         * @warning If the function returned from this method is called more than once, it will throw an exception.
+         * @warning If the function returned from this method is called more than once, it will cause undefined behaviour.
          */
         std::function<void(void)> registerKeyCallback(std::function<void(int,int,int,int)> changeNotify, std::function<void(void)> destructNotify);
         /**Indicates that the window has received a signal that it should close. See glfwWindowShouldClose.*/
