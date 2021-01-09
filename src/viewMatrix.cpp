@@ -146,7 +146,7 @@ void ViewMatrix::registerWithGlfwWindow(GlfwWindow &w)
     glfwWindow = &w;
 }
 
-const float* ViewMatrix::data() noexcept
+const float* ViewMatrix::data() const noexcept
 {
     return this->lookAtMatrix.data();
 }

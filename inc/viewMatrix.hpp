@@ -38,7 +38,7 @@ class ViewMatrix {
 
         void update(void);
         void registerWithGlfwWindow(GlfwWindow& w);
-        const float* data(void) noexcept;
+        const float* data(void) const noexcept;
 };
 
 #endif //VIEW_MATRIX_HPP
