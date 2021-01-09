@@ -17,7 +17,6 @@ class ViewMatrix {
         GlfwWindow* glfwWindow;
         bool mouseCursorInFocus;
         std::function<void(void)> keyCallbackUnregisterFunction;
-
         float prevTime;
         double prevXpos;
         double prevYpos;
@@ -32,6 +31,11 @@ class ViewMatrix {
         Matrix4 getLookAtMatrix(const Vector3 &worldUp, const Vector3 &cameraDirection, const Vector3 &cameraPos);
     public:
         explicit ViewMatrix(const float sensitivity = 0.001, const float moveSpeed = 2.5);
+        ~ViewMatrix(void);
+
+        ViewMatrix(const ViewMatrix&) = delete;
+        ViewMatrix& operator=(const ViewMatrix&) = delete;
+
         void update(void);
         void registerWithGlfwWindow(GlfwWindow& w);
         const float* data(void) noexcept;

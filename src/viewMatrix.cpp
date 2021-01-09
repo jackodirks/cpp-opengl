@@ -39,6 +39,15 @@ Vector3 ViewMatrix::getCameraFront(const float pitch, const float yaw)
     return Vector3::normalize(Vector3(x, y, z));
 }
 
+void ViewMatrix::unregisterGlfwWindow(void)
+{
+    if (keyCallbackUnregisterFunction) {
+        keyCallbackUnregisterFunction();
+        keyCallbackUnregisterFunction = 0;
+    }
+    this->glfwWindow = nullptr;
+}
+
 Matrix4 ViewMatrix::getLookAtMatrix(const Vector3 &worldUp, const Vector3 &cameraDirection, const Vector3 &cameraPos)
 {
     Vector3 cameraRight = Vector3::normalize(Vector3::crossProduct(worldUp, cameraDirection));
@@ -74,6 +83,11 @@ ViewMatrix::ViewMatrix(const float sensitivity, const float moveSpeed) : sensiti
 
     // Update sets the lookAtMatrix.
     update();
+}
+
+ViewMatrix::~ViewMatrix(void)
+{
+    unregisterGlfwWindow();
 }
 
 void ViewMatrix::update(void)
@@ -120,12 +134,15 @@ void ViewMatrix::update(void)
 
 void ViewMatrix::registerWithGlfwWindow(GlfwWindow &w)
 {
+    // We cannot be registered to multiple GlfwWindows. Moreover, if the destruct notifier gets called, we know
+    // for sure that the GlfwWindow object will cease to exist soon.
+    // Therefore, do a complete cleanup if one destruct notifier gets called.
     keyCallbackUnregisterFunction = w.registerKeyCallback(
             std::bind(&ViewMatrix::processKeyPress, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4),
             [this]() -> void {
                 this->keyCallbackUnregisterFunction = 0;
+                this->unregisterGlfwWindow();
             });
-
     glfwWindow = &w;
 }
 
