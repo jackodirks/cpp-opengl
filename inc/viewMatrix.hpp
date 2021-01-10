@@ -15,8 +15,10 @@ class ViewMatrix {
         const float sensitivity;
         const float moveSpeed;
         GlfwWindow* glfwWindow;
-        bool mouseCursorInFocus;
+        bool windowHasFocus;
+        bool mouseCursorCalibrated;
         std::function<void(void)> keyCallbackUnregisterFunction;
+        std::function<void(void)> focusCallbackUnregisterFunction;
         float prevTime;
         double prevXpos;
         double prevYpos;
@@ -26,6 +28,7 @@ class ViewMatrix {
         Vector3 cameraPos;
 
         void processKeyPress(const int key, const int scancode, const int action, const int mods);
+        void processWindowFocus(const bool focused);
         void unregisterGlfwWindow(void);
         Vector3 getCameraFront(const float pitch, const float yaw) const;
         Matrix4 getLookAtMatrix(const Vector3 &worldUp, const Vector3 &cameraDirection, const Vector3 &cameraPos) const;

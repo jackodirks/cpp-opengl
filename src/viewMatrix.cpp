@@ -30,6 +30,13 @@ void ViewMatrix::processKeyPress(const int key, const int scancode, const int ac
     }
 }
 
+void ViewMatrix::processWindowFocus(const bool focused)
+{
+    this->windowHasFocus = focused;
+    if (!focused)
+        mouseCursorCalibrated = false;
+}
+
 Vector3 ViewMatrix::getCameraFront(const float pitch, const float yaw) const
 {
     float x = std::cos(yaw) * std::cos(pitch);
@@ -44,6 +51,10 @@ void ViewMatrix::unregisterGlfwWindow(void)
     if (keyCallbackUnregisterFunction) {
         keyCallbackUnregisterFunction();
         keyCallbackUnregisterFunction = 0;
+    }
+    if (focusCallbackUnregisterFunction) {
+        focusCallbackUnregisterFunction();
+        focusCallbackUnregisterFunction = 0;
     }
     this->glfwWindow = nullptr;
 }
@@ -70,9 +81,9 @@ Matrix4 ViewMatrix::getLookAtMatrix(const Vector3 &worldUp, const Vector3 &camer
 ViewMatrix::ViewMatrix(const float sensitivity, const float moveSpeed) : sensitivity(sensitivity), moveSpeed(moveSpeed), pitchLimit(89.0*M_PI/180.0)
 {
     upActive = downActive = leftActive = rightActive = false;
-    keyCallbackUnregisterFunction = 0;
     glfwWindow = nullptr;
-    mouseCursorInFocus = false;
+    windowHasFocus = false;
+    mouseCursorCalibrated = false;
 
     prevTime = 0;
     prevXpos = 0;
@@ -99,9 +110,9 @@ void ViewMatrix::update(void)
     float deltaTime = currentTime - prevTime;
     prevTime = currentTime;
 
-    if (glfwWindow != nullptr) {
+    if (glfwWindow != nullptr && windowHasFocus) {
         const GlfwWindow::CursorPosition mousePos = glfwWindow->getCursorPosition();
-        if (mouseCursorInFocus) {
+        if (mouseCursorCalibrated) {
             double xOffset = (mousePos.xpos - prevXpos) * sensitivity;
             double yOffset = (mousePos.ypos - prevYpos) * sensitivity;
             yaw += xOffset;
@@ -112,9 +123,9 @@ void ViewMatrix::update(void)
                 pitch = -pitchLimit;
             }
         }
-        mouseCursorInFocus = true;
         prevXpos = mousePos.xpos;
         prevYpos = mousePos.ypos;
+        mouseCursorCalibrated = true;
     }
     const Vector3 cameraDirection = getCameraFront(pitch, yaw);
     const float cameraSpeed = moveSpeed * deltaTime;
@@ -143,6 +154,15 @@ void ViewMatrix::registerWithGlfwWindow(GlfwWindow &w)
                 this->keyCallbackUnregisterFunction = 0;
                 this->unregisterGlfwWindow();
             });
+
+    focusCallbackUnregisterFunction = w.registerWindowFocusCallback(
+            std::bind(&ViewMatrix::processWindowFocus, this, std::placeholders::_1),
+            [this]() -> void {
+                this->focusCallbackUnregisterFunction = 0;
+                this->unregisterGlfwWindow();
+            });
+
+    this->windowHasFocus = w.windowHasFocus();
     glfwWindow = &w;
 }
 
