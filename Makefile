@@ -6,7 +6,7 @@ LIBDIR=
 CFLAGS:=-std=gnu18 -Wall -Wfatal-errors
 CXXFLAGS:=-std=gnu++20 -Wshadow=local -Wall -Wfatal-errors
 CPPFLAGS:=$(INC) -MMD -MP
-LDFLAGS:=-lGL -lGLEW -lglfw -ldl -lm -lfreeimage -lfreetype
+LDFLAGS:=-lGL -lGLEW -lglfw -ldl -lm -lfreeimage -lfreetype -lfontconfig
 ODIR=obj/
 DEBUGODIR=$(ODIR)debug/
 RELEASEODIR=$(ODIR)release/

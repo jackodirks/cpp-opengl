@@ -1,10 +1,13 @@
 #include <iostream>
 #include <cmath>
+#include <sstream>
 
 #include "viewMatrix.hpp"
 #include "perspectiveProjectionMatrix.hpp"
+#include "orthographicProjectionMatrix.hpp"
 #include "openglMatrix.hpp"
 #include "shaderProgram.hpp"
+#include "textRenderer.hpp"
 #include "GLFW/glfw3.h"
 
 #define DEGREES_TO_RADIANS(degrees) ((degrees) * M_PI / 180.0)
@@ -72,6 +75,9 @@ int main() {
     }();
     window.setCursorMode(GlfwWindow::MouseCursorMode::disabled);
     glEnable(GL_DEPTH_TEST);
+    // Enable blending. This is required to properly display the text.
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     ShaderProgram shader = []() -> ShaderProgram {
         try {
             return ShaderProgram("shaders/vertex.vert", "shaders/fragmentLightsource.frag");
@@ -97,6 +103,11 @@ int main() {
     modelMatrix.setScale(0.5, 0.5, 0.5);
     projectionMatrix.registerWindowResizeCallback(window);
 
+    TextRenderer tRen = TextRenderer("serif", 0, 24);
+    OrthographicProjectionMatrix ortMat = OrthographicProjectionMatrix(0, size.width, 0, size.height, -50, 50);
+    ortMat.registerWindowResizeCallback(window);
+
+    float lastTime = glfwGetTime();
     while(!window.shouldClose()) {
         // Set the background
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
@@ -127,7 +138,26 @@ int main() {
         glDrawArrays(GL_TRIANGLES, 0, 36);
         modelMatrix.addLateRotate(0,0, 2*M_PI/900);
         modelMatrix.addRotate(0, 2*M_PI/900, 0);
+        Vector3 textColor = {0.5, 0.8, 0.2};
 
+
+        const struct GlfwWindow::CursorPosition cPos = window.getCursorPosition();
+        std::ostringstream stream;
+        stream << "Mouse cursor position: (" << cPos.xpos << ", " << cPos.ypos << ")" << ".";
+        tRen.renderText(stream.str(), 25.0f, 75.0f, 1.0f, textColor, ortMat);
+
+        const bool hasFocus = window.windowHasFocus();
+        stream = std::ostringstream();
+        stream << "Window has focus: " << (hasFocus ? "yes" : "no") << ".";
+        tRen.renderText(stream.str(), 25.0f, 50.0f, 1.0f, textColor, ortMat);
+
+        float curTime = glfwGetTime();
+        float timeDiff = curTime - lastTime;
+        lastTime = curTime;
+        float fps = 1/timeDiff;
+        stream = std::ostringstream();
+        stream << "Current FPS: " << fps << ".";
+        tRen.renderText(stream.str(), 25.0f, 25.0f, 1.0f, textColor, ortMat);
         window.swapBuffers();
         glfwPollEvents();
     }
