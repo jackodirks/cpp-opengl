@@ -32,7 +32,7 @@ std::string ShaderProgram::getLinkingError(GLuint shaderProgram)
     return linkerOutput;
 }
 
-GLint ShaderProgram::getUniformLocation(const std::string &name)
+GLint ShaderProgram::getUniformLocation(const std::string &name) const
 {
    GLint location = glGetUniformLocation(this->shaderProgram, name.c_str());
    if (location == -1) {
@@ -150,12 +150,12 @@ ShaderProgram::~ShaderProgram()
     glDeleteProgram(shaderProgram);
 }
 
-void ShaderProgram::use()
+void ShaderProgram::use() const
 {
     glUseProgram(this->shaderProgram);
 }
 
-void ShaderProgram::setUniformMatrix4v(const std::string &name, const size_t count, const bool transpose, const float* value)
+void ShaderProgram::setUniformMatrix4v(const std::string &name, const size_t count, const bool transpose, const float* value) const
 {
     glUniformMatrix4fv(getUniformLocation(name), count, transpose, value);
 }

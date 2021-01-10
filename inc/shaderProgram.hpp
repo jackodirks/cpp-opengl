@@ -2,13 +2,14 @@
 #define SHADER_PROGRAM_HPP
 
 #include "glad/glad.h"
+#include "vector4.hpp"
 
 class ShaderProgram {
     private:
         GLuint shaderProgram;
         std::string getCompilationError(GLuint shader);
         std::string getLinkingError(GLuint shaderProgram);
-        GLint getUniformLocation(const std::string &name);
+        GLint getUniformLocation(const std::string &name) const;
 
     public:
         ShaderProgram(const std::string &vertexShaderPath, const std::string &fragmentShaderPath);
@@ -20,8 +21,8 @@ class ShaderProgram {
         ShaderProgram(ShaderProgram&& other);
         ShaderProgram& operator=(ShaderProgram&&);
 
-        void use(void);
-        void setUniformMatrix4v(const std::string &name, const size_t count, const bool transpose, const float* value);
+        void use(void) const;
+        void setUniformMatrix4v(const std::string &name, const size_t count, const bool transpose, const float* value) const;
 };
 
 #endif //SHADER_PROGRAM_HPP
