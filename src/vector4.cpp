@@ -75,7 +75,7 @@ Vector4& Vector4::operator-=(const Vector4 &vec4)
     return *this;
 }
 
-float Vector4::operator[](const std::size_t i)
+float Vector4::operator[](const std::size_t i) const
 {
     if (i > 3)
         throw std::range_error("Vector4 has only 4 elements");

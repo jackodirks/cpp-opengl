@@ -26,7 +26,7 @@ class Vector4 {
         const float w() const;
         /**@return The value at position i.
          * @warning Throws range_error if i > 3*/
-        float operator[](const std::size_t i);
+        float operator[](const std::size_t i) const;
 
         /**Normalize the vector. A normalized vector has a length of 1 (sqrt(a^2 + b^2 + c^2 + ..) = 1).*/
         static Vector4 normalize(Vector4 vec);
