@@ -14,11 +14,14 @@ class GlfwWindow {
         GLFWwindow* window;
         std::list<std::pair<std::function<void(int, int)>, std::function<void(void)>>> resizeCallbackList;
         std::list<std::pair<std::function<void(int, int, int, int)>, std::function<void(void)>>> keyCallbackList;
+        std::list<std::pair<std::function<void(bool)>, std::function<void(void)>>> focusCallbackList;
 
         /**This function is registered using glfwSetFramebufferSizeCallback as callback.*/
         static void resizeCallbackFun(GLFWwindow* window, int width, int height);
         /**This function is registered using glfwSetKeyCallback as callback.*/
         static void keyCallbackFun(GLFWwindow* window, int key, int scancode, int action, int mods);
+        /**This function is registered using glfwSetWindowFocusCallback as callback.*/
+        static void windowFocusFun(GLFWwindow* window, int focused);
     public:
         /**See GlfwWindow::getWindowSize.*/
         struct WindowSize {
@@ -83,6 +86,20 @@ class GlfwWindow {
          * @warning If the function returned from this method is called more than once, it will cause undefined behaviour.
          */
         std::function<void(void)> registerKeyCallback(std::function<void(int,int,int,int)> changeNotify, std::function<void(void)> destructNotify);
+        /**@brief Used to register an std::function which will be called after GLFW calls the windowFocusCallback.
+         *
+         * It is a somewhat complex setup which utilizes three functions, two for administration and one as the actual callback.
+         * If you no longer whish to receive keyCallback events, you need to call the function returned from this one.
+         * If this object destructs, it will call the destructNotify. After the destructNotify was called, you are no longer allowed to call the function returned from this method.
+         * See also: GLFWkeyfun
+         *
+         * @param changeNotify This function is called when windowFocusCallback fires. It needs to accept one parameter: bool focused.
+         * @param destructNotify After this function has been called, the function returned from here can no longer be called, and the changeNotify function will never be called again.
+         * @return A function which can be used to inform this GlfwWindow that the related changeNotify may never be called again.
+         * @warning Do not call the function returned from this function after the destructNotify function has been called. Doing this will lead to undefined behaviour.
+         * @warning If the function returned from this method is called more than once, it will cause undefined behaviour.
+         */
+        std::function<void(void)> registerWindowFocusCallback(std::function<void(bool)> changeNotify, std::function<void(void)> destructNotify);
         /**Indicates that the window has received a signal that it should close. See glfwWindowShouldClose.*/
         bool shouldClose(void);
         /**See glfwSwapBuffers.*/
@@ -94,6 +111,8 @@ class GlfwWindow {
         /**Set a new mouse cursor mode (normal, hidden or disabled).
          * See also: glfwSetInputMode and GlfwWindow::MouseCursorMode*/
         void setCursorMode(MouseCursorMode newMode);
+        /**Check if this GlfwWindow has focus. See glfwGetWindowAttrib*/
+        const bool windowHasFocus(void);
 };
 
 #endif //GLFW_WINDOW_HPP

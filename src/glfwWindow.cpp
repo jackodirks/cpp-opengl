@@ -19,6 +19,14 @@ void GlfwWindow::keyCallbackFun(GLFWwindow* window, int key, int scancode, int a
     }
 }
 
+void GlfwWindow::windowFocusFun(GLFWwindow* window, int focused)
+{
+    GlfwWindow *glfwWindow = static_cast<GlfwWindow*>(glfwGetWindowUserPointer(window));
+    for (std::pair<std::function<void(bool)>, std::function<void(void)>> p : glfwWindow->focusCallbackList) {
+        std::get<0>(p)(static_cast<bool>(focused));
+    }
+}
+
 GlfwWindow::GlfwWindow(int width, int height, const std::string title, GLFWmonitor* monitor, GlfwWindow* share)
 {
     GLFWwindow *s = nullptr;
@@ -50,6 +58,7 @@ GlfwWindow::GlfwWindow(int width, int height, const std::string title, GLFWmonit
     glfwSetWindowUserPointer(window, this);
     glfwSetFramebufferSizeCallback(window, GlfwWindow::resizeCallbackFun);
     glfwSetKeyCallback(window, GlfwWindow::keyCallbackFun);
+    glfwSetWindowFocusCallback(window, GlfwWindow::windowFocusFun);
 }
 
 GlfwWindow::~GlfwWindow()
@@ -58,6 +67,9 @@ GlfwWindow::~GlfwWindow()
         std::get<1>(p)();
     }
     for (auto p : keyCallbackList) {
+        std::get<1>(p)();
+    }
+    for (auto p : focusCallbackList) {
         std::get<1>(p)();
     }
     glfwDestroyWindow(window);
@@ -71,12 +83,20 @@ std::function<void(void)> GlfwWindow::registerResizeCallback(std::function<void(
     };
 }
 
-
 std::function<void(void)> GlfwWindow::registerKeyCallback(std::function<void(int,int,int,int)> changeNotify, std::function<void(void)> destructNotify)
 {
     keyCallbackList.push_front(std::make_pair(changeNotify, destructNotify));
     return [cookie = keyCallbackList.cbegin(), this]() {
         this->keyCallbackList.erase(cookie);
+    };
+}
+
+
+std::function<void(void)> GlfwWindow::registerWindowFocusCallback(std::function<void(bool)> changeNotify, std::function<void(void)> destructNotify)
+{
+    focusCallbackList.push_front(std::make_pair(changeNotify, destructNotify));
+    return [cookie = focusCallbackList.cbegin(), this]() {
+        this->focusCallbackList.erase(cookie);
     };
 }
 
@@ -102,6 +122,12 @@ const struct GlfwWindow::CursorPosition GlfwWindow::getCursorPosition(void)
     struct GlfwWindow::CursorPosition cursorPos;
     glfwGetCursorPos(window, &cursorPos.xpos, &cursorPos.ypos);
     return cursorPos;
+}
+
+const bool GlfwWindow::windowHasFocus(void)
+{
+    int hasFocus = glfwGetWindowAttrib(this->window, GLFW_FOCUSED);
+    return static_cast<bool>(hasFocus);
 }
 
 void GlfwWindow::setCursorMode(GlfwWindow::MouseCursorMode newMode)
