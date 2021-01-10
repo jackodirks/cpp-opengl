@@ -159,3 +159,14 @@ void ShaderProgram::setUniformMatrix4v(const std::string &name, const size_t cou
 {
     glUniformMatrix4fv(getUniformLocation(name), count, transpose, value);
 }
+
+void ShaderProgram::setUniform3f(const std::string &name, const float v0, const float v1, const float v2) const
+{
+    glUniform3f(getUniformLocation(name), v0, v1, v2);
+}
+
+
+void ShaderProgram::setUniform3f(const std::string &name, const Vector4 &vec) const
+{
+    glUniform3f(getUniformLocation(name), vec[0], vec[1], vec[2]);
+}
