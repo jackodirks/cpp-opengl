@@ -13,6 +13,7 @@
 class ProjectionMatrix {
     protected:
         std::function<void(void)> unregisterFunction;
+        Matrix4 mat;
 
         /** Unregister from the GlfwWindow callback (if any). This function performs the necessary checks and is thus always safe.
          */
@@ -41,6 +42,11 @@ class ProjectionMatrix {
          * @param height The height in pixels.
          */
         virtual void setWindowSize(const float width, const float height) = 0;
+        /**Get a pointer to the projection matrix, row based.
+         *
+         * This is basically a float[16]. See std::array::data() for more details.
+         */
+        virtual const float* data(void) const noexcept;
         /** Register with given GlfwWindow.
          * This function will unregister first, if applicable.
          */

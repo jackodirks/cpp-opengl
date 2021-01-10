@@ -57,11 +57,6 @@ void OrthographicProjectionMatrix::setFar(const float far)
     this->mat = createMatrix();
 }
 
-const float* OrthographicProjectionMatrix::data(void) const noexcept
-{
-    return this->mat.data();
-}
-
 void OrthographicProjectionMatrix::setWindowSize(const float width, const float height)
 {
     this->right = width;

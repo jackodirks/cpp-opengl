@@ -14,7 +14,6 @@
  */
 class OrthographicProjectionMatrix : public ProjectionMatrix {
     private:
-        Matrix4 mat;
         float left, right, bottom, up, near, far;
         /**Create an orthographic projection matrix, using the six variables.
          */
@@ -36,11 +35,6 @@ class OrthographicProjectionMatrix : public ProjectionMatrix {
         void setNear(const float near);
         void setFar(const float far);
 
-        /**Get a pointer to the projection matrix, row based.
-         *
-         * This is basically a float[16]. See std::array::data() for more details.
-         */
-        const float* data(void) const noexcept;
         /*Update the window size. Left will be set to width, up will be set to height.
          */
         void setWindowSize(const float width, const float height) override;

@@ -15,7 +15,6 @@
  */
 class PerspectiveProjectionMatrix : public ProjectionMatrix {
     private:
-        Matrix4 mat;
         float fov, ar, near, far;
         /**Create an orthographic projection matrix, using the four variables.
          */
@@ -33,11 +32,6 @@ class PerspectiveProjectionMatrix : public ProjectionMatrix {
         void setNear(const float near);
         void setFar(const float far);
 
-        /**Get a pointer to the projection matrix, row based.
-         *
-         * This is basically a float[16]. See std::array::data() for more details.
-         */
-        const float* data(void) const noexcept;
         /*Update the window size. This will set ar = width/height.
          */
         void setWindowSize(const float width, const float height) override;

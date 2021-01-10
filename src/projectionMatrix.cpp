@@ -39,3 +39,9 @@ bool ProjectionMatrix::resizeCallbackRegistered(void)
 {
     return static_cast<bool>(unregisterFunction);
 }
+
+
+const float* ProjectionMatrix::data(void) const noexcept
+{
+    return this->mat.data();
+}

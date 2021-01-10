@@ -23,11 +23,6 @@ PerspectiveProjectionMatrix::PerspectiveProjectionMatrix(const float fov, const 
    this->mat = this->createMatrix();
 }
 
-const float* PerspectiveProjectionMatrix::data(void) const noexcept
-{
-    return this->mat.data();
-}
-
 void PerspectiveProjectionMatrix::setFov(const float fov)
 {
     this->fov = fov;
