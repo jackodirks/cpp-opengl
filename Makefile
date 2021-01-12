@@ -18,7 +18,7 @@ ALL_OFILES = $(DEBUG_OFILES) $(RELEASE_OFILES)
 RELEASE_TARGET := final
 DEBUG_TARGET := final_debug
 
-.DEFAULT_GOAL := release
+.DEFAULT_GOAL := all
 
 .PHONY: all clean debug release docs
 
