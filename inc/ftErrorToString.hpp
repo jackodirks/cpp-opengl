@@ -1,3 +1,6 @@
+#ifndef FT_ERROR_TO_STRING_HPP
+#define FT_ERROR_TO_STRING_HPP
+
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
@@ -9,3 +12,5 @@ inline const char *ftstrerror(FT_Error error)
 #define FT_ERROR_END_LIST default: return "Unknown error"; }
 #include FT_ERRORS_H
 }
+
+#endif //FT_ERROR_TO_STRING_HPP
