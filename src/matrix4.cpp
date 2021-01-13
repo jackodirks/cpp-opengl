@@ -38,6 +38,11 @@ Matrix4& Matrix4::operator*=(const Matrix4 &other)
     return *this;
 }
 
+float Matrix4::operator[](const std::size_t i) const
+{
+    return mat[i];
+}
+
 Matrix4 &Matrix4::operator+=(const Matrix4 &other)
 {
     for (size_t i = 0; i < this->mat.size(); ++i) {

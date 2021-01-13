@@ -3,6 +3,8 @@
 
 #include <array>
 
+#include "matrix4.hpp"
+
 /**Represents a 4x1 vector of type float.*/
 class Vector4 {
     protected:
@@ -41,6 +43,8 @@ class Vector4 {
 Vector4 operator*(Vector4 lhs, const float rhs);
 /**Create a new Vector4 from multiplication. See also: Vector4::operator*=.*/
 Vector4 operator*(const float lhs, Vector4 rhs);
+/**Create a new Vector4 by multiplying a matrix and a vector*/
+Vector4 operator*(const Matrix4 &lhs, const Vector4 &rhs);
 /**Create a new Vector4 from addition. See also: Vector4::operator+=.*/
 Vector4 operator+(Vector4 lhs, const Vector4 &rhs);
 /**Create a new Vector4 from subtraction. See also: Vector4::operator-=.*/

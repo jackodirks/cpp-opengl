@@ -25,6 +25,9 @@ class Matrix4 {
         /**Return a pointer to a c-style array containing the current data in this matrix, row-based.
          * See also the documentation for std::array::data.*/
         const float* data(void) const noexcept;
+        /**@return The value at position i.
+         * @warning Asking for i > 15 causes undefined behaviour.*/
+        float operator[](const std::size_t i) const;
 };
 /**Create a new Matrix4 from a multiplication. See Matrix4::operator*=.*/
 Matrix4 operator*(Matrix4 lhs, const float rhs);
