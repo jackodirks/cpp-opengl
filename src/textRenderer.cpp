@@ -7,16 +7,10 @@
 
 TextRenderer::TextRenderer(const std::string &fontHint, const unsigned int pixelWidthHint, const unsigned int pixelHeightHint) : shader("shaders/text.vert", "shaders/text.frag")
 {
-    FcBool success = FcInit();
-    if (success == FcFalse) {
-        throw std::runtime_error("FcInit failed");
-    }
-    FcConfig* config = FcInitLoadConfigAndFonts();
     FcPattern *pat = FcNameParse((const FcChar8*)fontHint.c_str());
-    success = FcConfigSubstitute(config, pat, FcMatchPattern);
+    FcBool success = FcConfigSubstitute(NULL, pat, FcMatchPattern);
     if (success == FcFalse) {
         FcPatternDestroy(pat);
-        FcConfigDestroy(config);
         FcFini();
         std::ostringstream errStream;
         errStream << "FcConfigSubstitute failed for string" << fontHint;
@@ -24,8 +18,7 @@ TextRenderer::TextRenderer(const std::string &fontHint, const unsigned int pixel
     }
     FcDefaultSubstitute(pat);
     FcResult result;
-    FcPattern* font = FcFontMatch(config, pat, &result);
-
+    FcPattern* font = FcFontMatch(NULL, pat, &result);
     std::string fontFileName;
 
     if (font) {
@@ -38,7 +31,6 @@ TextRenderer::TextRenderer(const std::string &fontHint, const unsigned int pixel
     // this prevents having to write the same code twice.
     FcPatternDestroy(font);
     FcPatternDestroy(pat);
-    FcConfigDestroy(config);
     FcFini();
 
     if (fontFileName.size() == 0) {
