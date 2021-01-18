@@ -27,6 +27,15 @@ void GlfwWindow::windowFocusFun(GLFWwindow* window, int focused)
     }
 }
 
+void GlfwWindow::scrollCallbackFun(GLFWwindow* window, double xoffset, double yoffset)
+{
+
+    GlfwWindow *glfwWindow = static_cast<GlfwWindow*>(glfwGetWindowUserPointer(window));
+    for (std::pair<std::function<void(double, double)>, std::function<void(void)>> p : glfwWindow->scrollCallbackList) {
+        std::get<0>(p)(xoffset, yoffset);
+    }
+}
+
 GlfwWindow::GlfwWindow(int width, int height, const std::string title, GLFWmonitor* monitor, GlfwWindow* share)
 {
     GLFWwindow *s = nullptr;
@@ -59,6 +68,7 @@ GlfwWindow::GlfwWindow(int width, int height, const std::string title, GLFWmonit
     glfwSetFramebufferSizeCallback(window, GlfwWindow::resizeCallbackFun);
     glfwSetKeyCallback(window, GlfwWindow::keyCallbackFun);
     glfwSetWindowFocusCallback(window, GlfwWindow::windowFocusFun);
+    glfwSetScrollCallback(window, GlfwWindow::scrollCallbackFun);
 }
 
 GlfwWindow::~GlfwWindow()
@@ -70,6 +80,9 @@ GlfwWindow::~GlfwWindow()
         std::get<1>(p)();
     }
     for (auto p : focusCallbackList) {
+        std::get<1>(p)();
+    }
+    for (auto p : scrollCallbackList) {
         std::get<1>(p)();
     }
     glfwDestroyWindow(window);
@@ -97,6 +110,14 @@ std::function<void(void)> GlfwWindow::registerWindowFocusCallback(std::function<
     focusCallbackList.push_front(std::make_pair(changeNotify, destructNotify));
     return [cookie = focusCallbackList.cbegin(), this]() {
         this->focusCallbackList.erase(cookie);
+    };
+}
+
+std::function<void(void)> GlfwWindow::registerScrollCallback(std::function<void(double, double)> changeNotify, std::function<void(void)> destructNotify)
+{
+    scrollCallbackList.push_front(std::make_pair(changeNotify, destructNotify));
+    return [cookie = scrollCallbackList.cbegin(), this]() {
+        this->scrollCallbackList.erase(cookie);
     };
 }
 
