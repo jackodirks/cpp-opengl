@@ -12,7 +12,8 @@
  */
 class ProjectionMatrix {
     protected:
-        std::function<void(void)> unregisterFunction;
+        std::function<void(void)> windowSizeUnregisterFunction;
+        std::function<void(void)> scrollUnregisterFunction;
         Matrix4 mat;
 
         /** Unregister from the GlfwWindow callback (if any). This function performs the necessary checks and is thus always safe.
@@ -37,11 +38,20 @@ class ProjectionMatrix {
 
         /** Set window size
          *
-         * This function is called when the object is notified of a screen resolution change.
+         * When a GlfwWindow is registered using registerWindowResizeCallback,
+         * this function is called when the object is notified of a screen resolution change
          * @param width The width in pixels.
          * @param height The height in pixels.
          */
         virtual void setWindowSize(const float width, const float height) = 0;
+        /**Process scroll input
+         *
+         * When a GlfwWindow is registered using registerWindowResizeCallback,
+         * this function is called when the object is notified of a scroll update.
+         * @param xoffset The new x offset.
+         * @param yoffset The new y offset.
+         */
+        virtual void setScrollOffset(const double xoffset, const double yoffset) = 0;
         /**Get a pointer to the projection matrix, row based.
          *
          * This is basically a float[16]. See std::array::data() for more details.
@@ -50,7 +60,7 @@ class ProjectionMatrix {
         /** Register with given GlfwWindow.
          * This function will unregister first, if applicable.
          */
-        virtual void registerWindowResizeCallback(GlfwWindow& window);
+        virtual void registerGlfwWindow(GlfwWindow& window);
 };
 
 #endif //PROJECTION_MATRIX_HPP

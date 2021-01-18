@@ -46,3 +46,13 @@ void PerspectiveProjectionMatrix::setWindowSize(float width, float height)
     this->ar = width/height;
     this->mat = this->createMatrix();
 }
+
+void PerspectiveProjectionMatrix::setScrollOffset(const double xoffset, const double yoffset)
+{
+    this->fov -= (yoffset / 50);
+    if (fov < 0.01)
+        fov = 0.01;
+    else if (fov > M_PI/4)
+        fov = M_PI/4;
+    this->mat = this->createMatrix();
+}

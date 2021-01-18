@@ -35,6 +35,8 @@ class PerspectiveProjectionMatrix : public ProjectionMatrix {
         /*Update the window size. This will set ar = width/height.
          */
         void setWindowSize(const float width, const float height) override;
+        /*Process the scroll input. This will influence fov*/
+        void setScrollOffset(const double xoffset, const double yoffset) override;
 };
 
 #endif //PERSPECTIVE_PROJECTION_MATRIX_HPP

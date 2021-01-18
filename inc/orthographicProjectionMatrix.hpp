@@ -35,9 +35,10 @@ class OrthographicProjectionMatrix : public ProjectionMatrix {
         void setNear(const float near);
         void setFar(const float far);
 
-        /*Update the window size. Left will be set to width, up will be set to height.
-         */
+        /*Update the window size. Left will be set to width, up will be set to height.*/
         void setWindowSize(const float width, const float height) override;
+        /*We do not use this function*/
+        void setScrollOffset(const double, const double) override {};
 };
 
 #endif //ORTHOGRAPHIC_PROJECTION_MATRIX_HPP

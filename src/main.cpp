@@ -101,11 +101,11 @@ int main() {
     PerspectiveProjectionMatrix projectionMatrix(DEGREES_TO_RADIANS(45.0), size.width, size.height, 0.1, 100);
     OpenGlMatrix modelMatrix;
     modelMatrix.setScale(0.5, 0.5, 0.5);
-    projectionMatrix.registerWindowResizeCallback(window);
+    projectionMatrix.registerGlfwWindow(window);
 
     TextRenderer tRen = TextRenderer("serif", 0, 24);
     OrthographicProjectionMatrix ortMat = OrthographicProjectionMatrix(0, size.width, 0, size.height, -50, 50);
-    ortMat.registerWindowResizeCallback(window);
+    ortMat.registerGlfwWindow(window);
 
     float lastTime = glfwGetTime();
     while(!window.shouldClose()) {

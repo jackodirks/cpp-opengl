@@ -5,7 +5,7 @@ ProjectionMatrix::~ProjectionMatrix()
     unregister();
 }
 
-ProjectionMatrix::ProjectionMatrix(const ProjectionMatrix&) : unregisterFunction(0)
+ProjectionMatrix::ProjectionMatrix(const ProjectionMatrix&) : windowSizeUnregisterFunction(0), scrollUnregisterFunction(0)
 {}
 
 ProjectionMatrix& ProjectionMatrix::operator=(const ProjectionMatrix& other)
@@ -15,23 +15,33 @@ ProjectionMatrix& ProjectionMatrix::operator=(const ProjectionMatrix& other)
     return *this;
 }
 
-void ProjectionMatrix::registerWindowResizeCallback(GlfwWindow& window)
+void ProjectionMatrix::registerGlfwWindow(GlfwWindow& window)
 {
     unregister();
-    unregisterFunction = window.registerResizeCallback(
+    windowSizeUnregisterFunction = window.registerResizeCallback(
         [this](int w, int h) {
             this->setWindowSize(static_cast<float>(w), static_cast<float>(h));
         },
         [this]() {
-            this->unregisterFunction = 0;
+            this->windowSizeUnregisterFunction = 0;
         });
+    scrollUnregisterFunction = window.registerScrollCallback(
+        std::bind(&ProjectionMatrix::setScrollOffset, this, std::placeholders::_1, std::placeholders::_2),
+        [this]() {
+            this->scrollUnregisterFunction = 0;
+        });
+
 }
 
 void ProjectionMatrix::unregister(void)
 {
-    if (unregisterFunction) {
-        unregisterFunction();
-        unregisterFunction = 0;
+    if (windowSizeUnregisterFunction) {
+        windowSizeUnregisterFunction();
+        windowSizeUnregisterFunction = 0;
+    }
+    if (scrollUnregisterFunction) {
+        scrollUnregisterFunction();
+        scrollUnregisterFunction = 0;
     }
 }
 
