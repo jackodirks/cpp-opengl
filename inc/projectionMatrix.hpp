@@ -51,10 +51,6 @@ class ProjectionMatrix {
          * This function will unregister first, if applicable.
          */
         virtual void registerWindowResizeCallback(GlfwWindow& window);
-        /** Check if this object is attached to (registerd with) any GlfwWindow
-         * @return true if attached, false otherwise.
-         */
-        virtual bool resizeCallbackRegistered(void);
 };
 
 #endif //PROJECTION_MATRIX_HPP
