@@ -219,9 +219,18 @@ void TextRenderer::renderText(const ProjectionMatrix& mat, const std::string &te
         glBindBuffer(GL_ARRAY_BUFFER, textVBO);
         // render
         std::vector<std::string> strList = splitString(text, maxLineLenPix, scale);
+        // Process vAlign
+        // Top-left is ymax. The y-coordinate passed to renderTextLine represents the absolute bottom on which the glyph is drawn.
+        // So, to achieve TextRenderer::VerticalAlignment::Top, we subtract the box height.
+        y -= (lineSpacing64thsPixel / 64) * scale;
+        if (vAlign == TextRenderer::VerticalAlignment::center) {
+            y += ((lineSpacing64thsPixel / 64) * strList.size() * scale) / 2;
+        } else if (vAlign == TextRenderer::VerticalAlignment::bottom) {
+            y += ((lineSpacing64thsPixel / 64) * strList.size() * scale);
+        }
         for (const std::string &s : strList) {
-            y -= (lineSpacing64thsPixel / 64) * scale;
             renderTextLine(s, x, y, scale);
+            y -= (lineSpacing64thsPixel / 64) * scale;
         }
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
