@@ -28,14 +28,18 @@ std::vector<std::string> TextRenderer::splitString(const std::string& str, float
                     result.push_back(line.substr(lastSplitPos, pos - lastSplitPos));
                     lastSplitPos = pos;
                 } else {
-                    std::string::size_type endPos = lastSpacePos + 1;
-                    if (endPos == lastSplitPos + 1) {
+                    std::string::size_type endPos = lastSpacePos;
+                    if (endPos == lastSplitPos) {
                         if (pos != lastSplitPos + 1) {
                             pos -= 1;
                         }
                         endPos = pos;
                     }
-                    result.push_back(line.substr(lastSplitPos, endPos - lastSplitPos));
+                    std::string s = line.substr(lastSplitPos, endPos - lastSplitPos);
+                    // Now remove trailing and leading spaces
+                    std::size_t begin = s.find_first_not_of(' ');
+                    std::size_t end = s.find_last_not_of(' ');
+                    result.push_back(s.substr(begin, end - begin + 1));
                     lastSplitPos = endPos;
                     lastSpacePos = endPos;
                 }
