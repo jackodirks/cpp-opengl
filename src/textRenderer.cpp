@@ -49,6 +49,17 @@ std::vector<std::string> TextRenderer::splitString(const std::string& str, float
     return result;
 }
 
+float TextRenderer::getLineLengthPixels(const std::string& line, const float scale) const
+{
+    float len = 0;
+    for (const char& c : line) {
+        len += characters[c].advance;
+    }
+    len /= 64;
+    return len * scale;
+
+}
+
 void TextRenderer::renderTextLine(const std::string& line, float x, float y, const float scale) const
 {
     for (const char& c : line) {
@@ -233,7 +244,14 @@ void TextRenderer::renderText(const ProjectionMatrix& mat, const std::string &te
             y += ((lineSpacing64thsPixel / 64) * strList.size() * scale);
         }
         for (const std::string &s : strList) {
-            renderTextLine(s, x, y, scale);
+            const float lineLen = getLineLengthPixels(s, scale);
+            float actX = x;
+            if (hAlign == TextRenderer::HorizontalAlignment::right) {
+                actX -= lineLen;
+            } else if (hAlign == TextRenderer::HorizontalAlignment::center) {
+                actX -= lineLen / 2;
+            }
+            renderTextLine(s, actX, y, scale);
             y -= (lineSpacing64thsPixel / 64) * scale;
         }
         glBindBuffer(GL_ARRAY_BUFFER, 0);

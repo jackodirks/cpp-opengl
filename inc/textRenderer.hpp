@@ -34,6 +34,7 @@ class TextRenderer {
 
         std::vector<std::string> splitString(const std::string& str, const float maxLineLenPix, const float scale) const;
         void renderTextLine(const std::string& line, float x, float y, const float scale) const;
+        float getLineLengthPixels(const std::string& line, const float scale) const;
     public:
         /**Specifies how the y coordinate is interpeted.*/
         enum class VerticalAlignment {
@@ -41,11 +42,11 @@ class TextRenderer {
             center,     /**The y-line goes through the center of the block of text.*/
             bottom      /**The block of text rests on top of the y-line.*/
         };
-
+        /*Specifies how the x coordinate is interpeted.*/
         enum class HorizontalAlignment {
-            left,
-            center,
-            right
+            left,       /**The x-line is the start of every line.*/
+            center,     /**The x-line is the center of every line.*/
+            right       /**The x-line is the end of every line.*/
         };
 
         /**Default constructor
