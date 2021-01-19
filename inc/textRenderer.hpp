@@ -23,14 +23,31 @@ class TextRenderer {
                 FT_Int top;
             };
             Bearing bearing;
-            FT_Pos advance;
+            float advance;
         };
 
         std::array<struct Character, 128> characters;
         std::array<GLuint, 128> textures;
         GLuint textVBO, textVAO;
         ShaderProgram shader;
+        float lineSpacing64thsPixel;
+
+        std::vector<std::string> splitString(const std::string& str, const float maxLineLenPix, const float scale) const;
+        void renderTextLine(const std::string& line, float x, float y, const float scale) const;
     public:
+
+        enum class VerticalAlignment {
+            top,
+            center,
+            bottom
+        };
+
+        enum class HorizontalAlignment {
+            left,
+            center,
+            right
+        };
+
         /**Default constructor
          * @param fontHint Can be almost anything, is passed to libFontConfig, who will attempt to match it to a font.
          * @param pixelWidthHint Is passed to libFreeType, see FT_Set_Pixel_Sizes.
@@ -42,5 +59,9 @@ class TextRenderer {
         TextRenderer(const TextRenderer&) = delete;
         TextRenderer& operator=(const TextRenderer&) = delete;
 
-        void renderText(const std::string &text, float x, float y, float scale, const Vector3 &color, const ProjectionMatrix &mat) const;
+        void renderText(const ProjectionMatrix& mat, const std::string &text, float x, float y, const float scale, const float maxLineLenPix = 0,
+                        const VerticalAlignment vAlign = VerticalAlignment::top,
+                        const HorizontalAlignment hAlign = HorizontalAlignment::left,
+                        const Vector3& textColor = Vector3(1, 1, 1),
+                        const bool addBackgroundColor = false, const Vector3& backgroundColor = Vector3(0, 0, 0)) const;
 };

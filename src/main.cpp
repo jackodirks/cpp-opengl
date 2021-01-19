@@ -118,7 +118,11 @@ int main() {
     OrthographicProjectionMatrix ortMat = OrthographicProjectionMatrix(0, wSize.width, 0, wSize.height, -50, 50);
     ortMat.registerGlfwWindow(window);
 
+    const GLubyte *vendor = glGetString(GL_VENDOR);
+    const GLubyte *renderer = glGetString(GL_RENDERER);
+
     float lastTime = glfwGetTime();
+    //const Vector3 textColor = {0.5, 0.8, 0.2};
     while(!window.shouldClose()) {
         // Set the background
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
@@ -143,28 +147,29 @@ int main() {
         lightingShader.setUniformMatrix4v("projection", 1, true, projectionMatrix.data());
         glBindVertexArray(cubeVAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
-        modelMatrix.addLateRotate(0,0, 2*M_PI/900);
-        modelMatrix.addRotate(0, 2*M_PI/900, 0);
-        Vector3 textColor = {0.5, 0.8, 0.2};
 
 
+
+        const GlfwWindow::WindowSize size = window.getWindowSize();
         const struct GlfwWindow::CursorPosition cPos = window.getCursorPosition();
-        std::ostringstream stream;
-        stream << "Mouse cursor position: (" << cPos.xpos << ", " << cPos.ypos << ")" << ".";
-        tRen.renderText(stream.str(), 25.0f, 75.0f, 1.0f, textColor, ortMat);
-
         const bool hasFocus = window.windowHasFocus();
-        stream = std::ostringstream();
-        stream << "Window has focus: " << (hasFocus ? "yes" : "no") << ".";
-        tRen.renderText(stream.str(), 25.0f, 50.0f, 1.0f, textColor, ortMat);
-
         float curTime = glfwGetTime();
         float timeDiff = curTime - lastTime;
         lastTime = curTime;
         float fps = 1/timeDiff;
-        stream = std::ostringstream();
-        stream << "Current FPS: " << fps << ".";
-        tRen.renderText(stream.str(), 25.0f, 25.0f, 1.0f, textColor, ortMat);
+
+        std::ostringstream stream;
+        stream << "Mouse cursor position: (" << cPos.xpos << ", " << cPos.ypos << ")" << ".\n";
+        stream << "Window has focus: " << (hasFocus ? "yes" : "no") << ".\n";
+        stream << "Current FPS: " << fps << ".\n";
+        tRen.renderText(ortMat, stream.str(), 0.0f, size.height, 1.0f);
+
+        stream.str(std::string());
+        stream << "GL_VENDOR: " << vendor << "\n";
+        stream << "GL_RENDERER: " << renderer << "\n";
+
+        tRen.renderText(ortMat, stream.str(), 0.0f, size.height - 200, 1.0f, size.width/2);
+
         window.swapBuffers();
         glfwPollEvents();
     }

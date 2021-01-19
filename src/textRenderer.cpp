@@ -5,6 +5,80 @@
 #include "textRenderer.hpp"
 #include "ftErrorToString.hpp"
 
+std::vector<std::string> TextRenderer::splitString(const std::string& str, float maxLineLenPix, const float scale) const
+{
+    std::vector<std::string> result;
+    std::stringstream ss(str);
+    for (std::string line; std::getline(ss, line, '\n'); ) {
+        if (maxLineLenPix == 0) {
+            result.push_back(line);
+        } else {
+            std::string::size_type lastSplitPos = 0;
+            std::string::size_type lastSpacePos = 0;
+            while (lastSplitPos < line.length()) {
+                std::string::size_type pos = lastSplitPos;
+                float pixelCount = 0;
+                while (pos < line.length() && pixelCount < maxLineLenPix) {
+                    if (line[pos] == ' ')
+                        lastSpacePos = pos;
+                    pixelCount += (this->characters[line[pos]].advance / 64) * scale;
+                    pos++;
+                }
+                if (pixelCount < maxLineLenPix) {
+                    result.push_back(line.substr(lastSplitPos, pos - lastSplitPos));
+                    lastSplitPos = pos;
+                } else {
+                    std::string::size_type endPos = lastSpacePos + 1;
+                    if (endPos == lastSplitPos + 1) {
+                        if (pos != lastSplitPos + 1) {
+                            pos -= 1;
+                        }
+                        endPos = pos;
+                    }
+                    result.push_back(line.substr(lastSplitPos, endPos - lastSplitPos));
+                    lastSplitPos = endPos;
+                    lastSpacePos = endPos;
+                }
+            }
+        }
+    }
+    return result;
+}
+
+void TextRenderer::renderTextLine(const std::string& line, float x, float y, const float scale) const
+{
+    for (const char& c : line) {
+        std::size_t chIndex = c;
+        if (chIndex > characters.size()){
+            chIndex = '?';
+        }
+        struct Character ch = characters[chIndex];
+        float xpos = x + ch.bearing.left * scale;
+        float ypos = y - (ch.size.rows - ch.bearing.top) * scale;
+
+        float w = ch.size.width * scale;
+        float h = ch.size.rows * scale;
+        // update VBO for each character
+        float vertices[6][4] = {
+            { xpos,     ypos + h,   0.0f, 0.0f },
+            { xpos,     ypos,       0.0f, 1.0f },
+            { xpos + w, ypos,       1.0f, 1.0f },
+
+            { xpos,     ypos + h,   0.0f, 0.0f },
+            { xpos + w, ypos,       1.0f, 1.0f },
+            { xpos + w, ypos + h,   1.0f, 0.0f }
+        };
+        // render glyph texture over quad
+        glBindTexture(GL_TEXTURE_2D, textures[chIndex]);
+        // update content of VBO memory
+        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+        // render quad
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+        // now advance cursors for next glyph (note that advance is number of 1/64 pixels)
+        x += (ch.advance / 64) * scale; // bitshift by 6 to get value in pixels (2^6 = 64)
+    }
+}
+
 TextRenderer::TextRenderer(const std::string &fontHint, const unsigned int pixelWidthHint, const unsigned int pixelHeightHint) : shader("shaders/text.vert", "shaders/text.frag")
 {
     FcPattern *pat = FcNameParse((const FcChar8*)fontHint.c_str());
@@ -65,6 +139,7 @@ TextRenderer::TextRenderer(const std::string &fontHint, const unsigned int pixel
         errStream << "FT_Set_Pixel_Sizes failed. Error: " << ftstrerror(ftErr) << " width hint: " << pixelWidthHint << " height hint: " << pixelHeightHint;
         throw std::runtime_error(errStream.str());
     }
+    this->lineSpacing64thsPixel = static_cast<float>(face->size->metrics.height);
     // Disable byte-alignment restriction
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     // Generate the textures
@@ -100,7 +175,7 @@ TextRenderer::TextRenderer(const std::string &fontHint, const unsigned int pixel
         characters[c].size.rows = face->glyph->bitmap.rows;
         characters[c].bearing.left = face->glyph->bitmap_left;
         characters[c].bearing.top = face->glyph->bitmap_top;
-        characters[c].advance = face->glyph->advance.x;
+        characters[c].advance = static_cast<float>(face->glyph->advance.x);
     }
     FT_Done_Face(face);
     FT_Done_FreeType(ft);
@@ -129,44 +204,24 @@ TextRenderer::~TextRenderer(void)
     glDeleteBuffers(1, &textVBO);
 }
 
-void TextRenderer::renderText(const std::string &text, float x, float y, float scale, const Vector3& color, const ProjectionMatrix& mat) const
+void TextRenderer::renderText(const ProjectionMatrix& mat, const std::string &text, float x, float y, const float scale,
+                              const float maxLineLenPix,
+                              const VerticalAlignment vAlign,
+                              const HorizontalAlignment hAlign,
+                              const Vector3& textColor,
+                              const bool addBackgroundColor, const Vector3& backgroundColor) const
 {
         this->shader.use();
         shader.setUniformMatrix4v("projection", 1, true, mat.data());
-        shader.setUniform3f("textColor", color);
+        shader.setUniform3f("textColor", textColor);
         glActiveTexture(GL_TEXTURE0);
         glBindVertexArray(textVAO);
         glBindBuffer(GL_ARRAY_BUFFER, textVBO);
         // render
-        for (const char& c : text) {
-            std::size_t chIndex = c;
-            if (chIndex > characters.size()){
-                chIndex = '?';
-            }
-            struct Character ch = characters[chIndex];
-            float xpos = x + ch.bearing.left * scale;
-            float ypos = y - (ch.size.rows - ch.bearing.top) * scale;
-
-            float w = ch.size.width * scale;
-            float h = ch.size.rows * scale;
-            // update VBO for each character
-            float vertices[6][4] = {
-                { xpos,     ypos + h,   0.0f, 0.0f },
-                { xpos,     ypos,       0.0f, 1.0f },
-                { xpos + w, ypos,       1.0f, 1.0f },
-
-                { xpos,     ypos + h,   0.0f, 0.0f },
-                { xpos + w, ypos,       1.0f, 1.0f },
-                { xpos + w, ypos + h,   1.0f, 0.0f }
-            };
-            // render glyph texture over quad
-            glBindTexture(GL_TEXTURE_2D, textures[chIndex]);
-            // update content of VBO memory
-            glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
-            // render quad
-            glDrawArrays(GL_TRIANGLES, 0, 6);
-            // now advance cursors for next glyph (note that advance is number of 1/64 pixels)
-            x += (ch.advance / 64) * scale; // bitshift by 6 to get value in pixels (2^6 = 64)
+        std::vector<std::string> strList = splitString(text, maxLineLenPix, scale);
+        for (const std::string &s : strList) {
+            y -= (lineSpacing64thsPixel / 64) * scale;
+            renderTextLine(s, x, y, scale);
         }
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
