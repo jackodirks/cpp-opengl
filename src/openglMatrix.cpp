@@ -46,9 +46,10 @@ Matrix4 OpenGlMatrix::getCombinedMatrix(void) const
 {
     // scale, rotate, translate
     // Default constructor creates identity matrix.
-    Matrix4 mat4 = toScaleMatrix(this->scaling);
-    mat4 *= toRotationMatrix(this->rotation);
+    Matrix4 mat4;
     mat4 *= toTranslationMatrix(this->translation);
+    mat4 *= toRotationMatrix(this->rotation);
+    mat4 *= toScaleMatrix(this->scaling);
     mat4 *= toRotationMatrix(this->lateRotation);
     return mat4;
 }

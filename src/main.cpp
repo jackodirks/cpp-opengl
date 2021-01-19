@@ -78,33 +78,44 @@ int main() {
     // Enable blending. This is required to properly display the text.
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    ShaderProgram shader = []() -> ShaderProgram {
+    ShaderProgram lightCubeShader = []() -> ShaderProgram {
         try {
             return ShaderProgram("shaders/vertex.vert", "shaders/fragmentLightsource.frag");
         } catch (const std::runtime_error &e) {
-            std::cerr << "An error occured during construction of OpenGL shader: " << e.what();
+            std::cerr << "An error occured during construction of OpenGL shader lightSourceShader: " << e.what();
             std::exit(EXIT_FAILURE);
         }
     }();
+    ShaderProgram lightingShader = []() -> ShaderProgram {
+        try {
+            return ShaderProgram("shaders/vertex.vert", "shaders/fragment.frag");
+        } catch (const std::runtime_error &e) {
+            std::cerr << "An error occured during construction of OpenGL shader lightingShader: " << e.what();
+            std::exit(EXIT_FAILURE);
+        }
+    }();
+
     GLuint VBO, cubeVAO;
     glGenBuffers(1, &VBO);
     glGenVertexArrays(1, &cubeVAO);
-    glBindVertexArray(cubeVAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glBindVertexArray(cubeVAO);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
     ViewMatrix viewMatrix;
     viewMatrix.registerWithGlfwWindow(window);
-    GlfwWindow::WindowSize size = window.getWindowSize();
-    PerspectiveProjectionMatrix projectionMatrix(DEGREES_TO_RADIANS(45.0), size.width, size.height, 0.1, 100);
-    OpenGlMatrix modelMatrix;
-    modelMatrix.setScale(0.5, 0.5, 0.5);
+    GlfwWindow::WindowSize wSize = window.getWindowSize();
+    PerspectiveProjectionMatrix projectionMatrix(DEGREES_TO_RADIANS(45.0), wSize.width, wSize.height, 0.1, 100);
+    OpenGlMatrix lightCubeModel;
+    OpenGlMatrix cubeModel;
+    lightCubeModel.setScale(0.2, 0.2, 0.2);
+    lightCubeModel.setTranslate(1.2, 1.0, 2.0);
     projectionMatrix.registerGlfwWindow(window);
 
     TextRenderer tRen = TextRenderer("serif", 0, 24);
-    OrthographicProjectionMatrix ortMat = OrthographicProjectionMatrix(0, size.width, 0, size.height, -50, 50);
+    OrthographicProjectionMatrix ortMat = OrthographicProjectionMatrix(0, wSize.width, 0, wSize.height, -50, 50);
     ortMat.registerGlfwWindow(window);
 
     float lastTime = glfwGetTime();
@@ -115,26 +126,22 @@ int main() {
 
         // Update the viewMatrix
         viewMatrix.update();
-        // Draw the cube
-        shader.use();
-        // Copy the matrices
-        modelMatrix.setTranslate();
-        shader.setUniformMatrix4v("model", 1, true, modelMatrix.data());
-        shader.setUniformMatrix4v("view", 1, true, viewMatrix.data());
-        shader.setUniformMatrix4v("projection", 1, true, projectionMatrix.data());
+        // Draw the colored cube
+        lightingShader.use();
+        lightingShader.setUniform3f("objectColor", 1.0, 0.5, 0.31);
+        lightingShader.setUniform3f("lightColor", 1, 1, 1);
+        lightingShader.setUniformMatrix4v("model", 1, true, cubeModel.data());
+        lightingShader.setUniformMatrix4v("view", 1, true, viewMatrix.data());
+        lightingShader.setUniformMatrix4v("projection", 1, true, projectionMatrix.data());
         glBindVertexArray(cubeVAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
-        modelMatrix.setTranslate(1.5);
-        shader.setUniformMatrix4v("model", 1, true, modelMatrix.data());
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-        modelMatrix.setTranslate(-1.5);
-        shader.setUniformMatrix4v("model", 1, true, modelMatrix.data());
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-        modelMatrix.setTranslate(0, -1.5);
-        shader.setUniformMatrix4v("model", 1, true, modelMatrix.data());
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-        modelMatrix.setTranslate(0, 1.5);
-        shader.setUniformMatrix4v("model", 1, true, modelMatrix.data());
+
+        // Draw the light cube
+        lightCubeShader.use();
+        lightingShader.setUniformMatrix4v("model", 1, true, lightCubeModel.data());
+        lightingShader.setUniformMatrix4v("view", 1, true, viewMatrix.data());
+        lightingShader.setUniformMatrix4v("projection", 1, true, projectionMatrix.data());
+        glBindVertexArray(cubeVAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
         modelMatrix.addLateRotate(0,0, 2*M_PI/900);
         modelMatrix.addRotate(0, 2*M_PI/900, 0);
@@ -161,6 +168,8 @@ int main() {
         window.swapBuffers();
         glfwPollEvents();
     }
+    glDeleteVertexArrays(1, &cubeVAO);
+    glDeleteBuffers(1, &VBO);
     glfwTerminate();
     return 0;
 }
