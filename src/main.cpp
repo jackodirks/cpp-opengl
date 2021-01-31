@@ -148,8 +148,6 @@ int main() {
         glBindVertexArray(cubeVAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
-
-
         const GlfwWindow::WindowSize size = window.getWindowSize();
         const struct GlfwWindow::CursorPosition cPos = window.getCursorPosition();
         const bool hasFocus = window.windowHasFocus();
@@ -162,13 +160,15 @@ int main() {
         stream << "Mouse cursor position: (" << cPos.xpos << ", " << cPos.ypos << ")" << ".\n";
         stream << "Window has focus: " << (hasFocus ? "yes" : "no") << ".\n";
         stream << "Current FPS: " << fps << ".\n";
-        tRen.renderText(ortMat, stream.str(), 0.0f, size.height, 1.0f);
+        tRen.renderText(ortMat, stream.str(), 0, size.height, 1.0f, 0, TextRenderer::VerticalAlignment::top,
+                        TextRenderer::HorizontalAlignment::left);
 
         stream.str(std::string());
         stream << "GL_VENDOR: " << vendor << "\n";
         stream << "GL_RENDERER: " << renderer << "\n";
-
-        tRen.renderText(ortMat, stream.str(), 0.0f, size.height - 200, 1.0f, size.width/2);
+        tRen.renderText(ortMat, stream.str(), size.width, size.height, 1.0f, size.width/2,
+                        TextRenderer::VerticalAlignment::top,
+                        TextRenderer::HorizontalAlignment::right);
 
         window.swapBuffers();
         glfwPollEvents();
