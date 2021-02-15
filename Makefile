@@ -17,6 +17,7 @@ RELEASE_OFILES += $(patsubst $(SRCDIR)%,$(RELEASEODIR)%,$(patsubst %.cpp,%.cpp.o
 ALL_OFILES = $(DEBUG_OFILES) $(RELEASE_OFILES)
 RELEASE_TARGET := final
 DEBUG_TARGET := final_debug
+WERROR_CONFIG := -Werror -Wno-error=unused-variable
 
 .DEFAULT_GOAL := all
 
@@ -24,8 +25,8 @@ DEBUG_TARGET := final_debug
 
 all: release debug
 
-release: CFLAGS += -O2 -march=native -Werror
-release: CXXFLAGS += -O2 -march=native -Werror
+release: CFLAGS += -O2 $(WERROR_CONFIG)
+release: CXXFLAGS += -O2 $(WERROR_CONFIG)
 release: $(RELEASE_TARGET)
 
 debug: CFLAGS += -Og -ggdb
