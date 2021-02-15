@@ -74,7 +74,9 @@ ShaderProgram::ShaderProgram(const std::string &vertexShaderPath, const std::str
     if (success == GL_FALSE) {
         std::string error = getCompilationError(vertexShader);
         glDeleteShader(vertexShader);
-        throw std::runtime_error("Vertex shader compilation failed: " + error);
+        std::stringstream errStream;
+        errStream << "Compiling vertex shader " << vertexShaderPath << " failed: " << error;
+        throw std::runtime_error(errStream.str());
     }
 
     // Load and compile fragment shader
@@ -106,7 +108,9 @@ ShaderProgram::ShaderProgram(const std::string &vertexShaderPath, const std::str
         std::string error = getCompilationError(fragmentShader);
         glDeleteShader(vertexShader);
         glDeleteShader(fragmentShader);
-        throw std::runtime_error("Fragment shader compilation failed: " + error);
+        std::ostringstream errStream;
+        errStream << "Compiling fragment shader " << fragmentShaderPath << " failed: " << error;
+        throw std::runtime_error(errStream.str());
     }
 
     // Link the two together
