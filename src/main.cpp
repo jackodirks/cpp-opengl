@@ -161,14 +161,18 @@ int main() {
         stream << "Window has focus: " << (hasFocus ? "yes" : "no") << ".\n";
         stream << "Current FPS: " << fps << ".\n";
         tRen.renderText(ortMat, stream.str(), 0, size.height, 1.0f, 0, TextRenderer::VerticalAlignment::top,
-                        TextRenderer::HorizontalAlignment::left);
+                        TextRenderer::HorizontalAlignment::left,
+                        Vector3(1.0, 1.0, 1.0), true,
+                        Vector3());
 
         stream.str(std::string());
         stream << "GL_VENDOR: " << vendor << "\n";
         stream << "GL_RENDERER: " << renderer << "\n";
         tRen.renderText(ortMat, stream.str(), size.width, size.height, 1.0f, size.width/2,
                         TextRenderer::VerticalAlignment::top,
-                        TextRenderer::HorizontalAlignment::right);
+                        TextRenderer::HorizontalAlignment::right,
+                        Vector3(1.0, 1.0, 1.0), true,
+                        Vector3());
 
         window.swapBuffers();
         glfwPollEvents();

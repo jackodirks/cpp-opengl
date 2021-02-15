@@ -94,7 +94,9 @@ void TextRenderer::renderTextLine(const std::string& line, float x, float y, con
     }
 }
 
-TextRenderer::TextRenderer(const std::string &fontHint, const unsigned int pixelWidthHint, const unsigned int pixelHeightHint) : shader("shaders/text.vert", "shaders/text.frag")
+TextRenderer::TextRenderer(const std::string &fontHint, const unsigned int pixelWidthHint, const unsigned int pixelHeightHint) :
+    textShader("shaders/text.vert", "shaders/text.frag"),
+    backgroundShader("shaders/textBackground.vert", "shaders/textBackground.frag")
 {
     FcPattern *pat = FcNameParse((const FcChar8*)fontHint.c_str());
     FcBool success = FcConfigSubstitute(NULL, pat, FcMatchPattern);
@@ -155,6 +157,7 @@ TextRenderer::TextRenderer(const std::string &fontHint, const unsigned int pixel
         throw std::runtime_error(errStream.str());
     }
     this->lineSpacing64thsPixel = static_cast<float>(face->size->metrics.height);
+    this->descender64thsPixel = static_cast<float>(face->size->metrics.descender);
     // Disable byte-alignment restriction
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     // Generate the textures
@@ -197,17 +200,32 @@ TextRenderer::TextRenderer(const std::string &fontHint, const unsigned int pixel
 
     // Create the VBO which will be used to render the text.
     glGenVertexArrays(1, &textVAO);
+    glGenVertexArrays(1, &bgVAO);
     glGenBuffers(1, &textVBO);
+    glGenBuffers(1, &bgVBO);
     glBindVertexArray(textVAO);
     glBindBuffer(GL_ARRAY_BUFFER, textVBO);
     // We create a buffer of this size, which is enough for a square with texture coordinates.
     // Remember that a square is two triangles, which explains the six. The triangles have a x,y coordinate and
-    // a x, y texture coordinate.
+    // a x, y texture coordinate, which explains the four.
     glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
     // How the data should be interpret, so each vertex has 4 elements, no stride.
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
     glEnableVertexAttribArray(0);
     // Unbind them all
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
+    // Now for the background
+    glBindVertexArray(bgVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, bgVBO);
+    // This is a simple, 2D square. Which is two triangles, which means 6 sets of 2 coordinates.
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 2, NULL, GL_DYNAMIC_DRAW);
+    // How the data should be interpret, so each vertex has 4 elements, no stride.
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0);
+    glEnableVertexAttribArray(0);
+
+    // Unbind
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 }
@@ -216,7 +234,26 @@ TextRenderer::~TextRenderer(void)
 {
     glDeleteTextures(textures.size(), textures.data());
     glDeleteVertexArrays(1, &textVAO);
+    glDeleteVertexArrays(1, &bgVAO);
     glDeleteBuffers(1, &textVBO);
+    glDeleteBuffers(1, &bgVBO);
+}
+
+void TextRenderer::renderBackground(const float y, const float x, const float height, const float length) const
+{
+    float vertices[] = {
+        // First triangle
+        x + length, y + height, // Top right
+        x + length, y,          // bottom right
+        x,          y + height, // Top left
+        // Second triangle
+        x + length, y,          // Bottom right
+        x,          y,          // Bottom left
+        x,          y + height, // Top left
+    };
+    (void)vertices;
+    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
 }
 
 void TextRenderer::renderText(const ProjectionMatrix& mat, const std::string &text, float x, float y, const float scale,
@@ -226,34 +263,52 @@ void TextRenderer::renderText(const ProjectionMatrix& mat, const std::string &te
                               const Vector3& textColor,
                               const bool addBackgroundColor, const Vector3& backgroundColor) const
 {
-        this->shader.use();
-        shader.setUniformMatrix4v("projection", 1, true, mat.data());
-        shader.setUniform3f("textColor", textColor);
-        glActiveTexture(GL_TEXTURE0);
+    // Prepare the text shader
+    this->textShader.use();
+    textShader.setUniformMatrix4v("projection", 1, true, mat.data());
+    textShader.setUniform3f("textColor", textColor);
+    glActiveTexture(GL_TEXTURE0);
+    // Optionally prepare the background shader
+    if (addBackgroundColor) {
+        this->backgroundShader.use();
+        backgroundShader.setUniformMatrix4v("projection", 1, true, mat.data());
+        backgroundShader.setUniform3f("backgroundColor", backgroundColor);
+    }
+
+    // render
+    std::vector<std::string> strList = splitString(text, maxLineLenPix, scale);
+    // Process vAlign
+    // Top-left is ymax. The y-coordinate passed to renderTextLine represents the absolute bottom on which the glyph is drawn.
+    // So, to achieve TextRenderer::VerticalAlignment::Top, we subtract the box height plus the descender.
+    // The descender is a negative number and represents the maximum amount any glyph will go below the given y line.
+    float lineHeight = (this->lineSpacing64thsPixel / 64) * scale;
+    float descender = (this->descender64thsPixel / 64) * scale;
+    y -= lineHeight + descender;
+    if (vAlign == TextRenderer::VerticalAlignment::center) {
+        y += (lineHeight * strList.size()) / 2;
+    } else if (vAlign == TextRenderer::VerticalAlignment::bottom) {
+        y += (lineHeight * strList.size());
+    }
+    for (const std::string &s : strList) {
+        const float lineLen = getLineLengthPixels(s, scale);
+        float actX = x;
+        if (hAlign == TextRenderer::HorizontalAlignment::right) {
+            actX -= lineLen;
+        } else if (hAlign == TextRenderer::HorizontalAlignment::center) {
+            actX -= lineLen / 2;
+        }
+        if (addBackgroundColor) {
+            this->backgroundShader.use();
+            glBindVertexArray(bgVAO);
+            glBindBuffer(GL_ARRAY_BUFFER, bgVBO);
+            renderBackground(y + descender, actX, lineHeight, lineLen);
+        }
+        this->textShader.use();
         glBindVertexArray(textVAO);
         glBindBuffer(GL_ARRAY_BUFFER, textVBO);
-        // render
-        std::vector<std::string> strList = splitString(text, maxLineLenPix, scale);
-        // Process vAlign
-        // Top-left is ymax. The y-coordinate passed to renderTextLine represents the absolute bottom on which the glyph is drawn.
-        // So, to achieve TextRenderer::VerticalAlignment::Top, we subtract the box height.
-        y -= (lineSpacing64thsPixel / 64) * scale;
-        if (vAlign == TextRenderer::VerticalAlignment::center) {
-            y += ((lineSpacing64thsPixel / 64) * strList.size() * scale) / 2;
-        } else if (vAlign == TextRenderer::VerticalAlignment::bottom) {
-            y += ((lineSpacing64thsPixel / 64) * strList.size() * scale);
-        }
-        for (const std::string &s : strList) {
-            const float lineLen = getLineLengthPixels(s, scale);
-            float actX = x;
-            if (hAlign == TextRenderer::HorizontalAlignment::right) {
-                actX -= lineLen;
-            } else if (hAlign == TextRenderer::HorizontalAlignment::center) {
-                actX -= lineLen / 2;
-            }
-            renderTextLine(s, actX, y, scale);
-            y -= (lineSpacing64thsPixel / 64) * scale;
-        }
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glBindVertexArray(0);
+        renderTextLine(s, actX, y, scale);
+        y -= lineHeight;
+    }
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
 }

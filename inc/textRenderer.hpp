@@ -28,13 +28,14 @@ class TextRenderer {
 
         std::array<struct Character, 128> characters;
         std::array<GLuint, 128> textures;
-        GLuint textVBO, textVAO;
-        ShaderProgram shader;
-        float lineSpacing64thsPixel;
+        GLuint textVBO, textVAO, bgVBO, bgVAO;
+        ShaderProgram textShader, backgroundShader;
+        float lineSpacing64thsPixel, descender64thsPixel;
 
         std::vector<std::string> splitString(const std::string& str, const float maxLineLenPix, const float scale) const;
         void renderTextLine(const std::string& line, float x, float y, const float scale) const;
         float getLineLengthPixels(const std::string& line, const float scale) const;
+        void renderBackground(const float y, const float x, const float height, const float length) const;
     public:
         /**Specifies how the y coordinate is interpeted.*/
         enum class VerticalAlignment {
