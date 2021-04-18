@@ -9,6 +9,7 @@
 #include "shaderProgram.hpp"
 #include "textRenderer.hpp"
 #include "GLFW/glfw3.h"
+#include "texture2D.hpp"
 
 #define DEGREES_TO_RADIANS(degrees) ((degrees) * M_PI / 180.0)
 
@@ -56,6 +57,50 @@ static float vertices[] = {
     -0.5f,  0.5f, -0.5f,
 };
 
+static float textureCoordinates[] = {
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+        1.0f, 1.0f,
+        1.0f, 1.0f,
+        0.0f, 1.0f,
+        0.0f, 0.0f,
+
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+        1.0f, 1.0f,
+        1.0f, 1.0f,
+        0.0f, 1.0f,
+        0.0f, 0.0f,
+
+        1.0f, 0.0f,
+        1.0f, 1.0f,
+        0.0f, 1.0f,
+        0.0f, 1.0f,
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+
+        1.0f, 0.0f,
+        1.0f, 1.0f,
+        0.0f, 1.0f,
+        0.0f, 1.0f,
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+
+        0.0f, 1.0f,
+        1.0f, 1.0f,
+        1.0f, 0.0f,
+        1.0f, 0.0f,
+        0.0f, 0.0f,
+        0.0f, 1.0f,
+
+        0.0f, 1.0f,
+        1.0f, 1.0f,
+        1.0f, 0.0f,
+        1.0f, 0.0f,
+        0.0f, 0.0f,
+        0.0f, 1.0f
+};
+
 int main() {
 
     if (!glfwInit()) {
@@ -94,15 +139,35 @@ int main() {
             std::exit(EXIT_FAILURE);
         }
     }();
+    ShaderProgram textureShader = []() -> ShaderProgram {
+        try {
+            return ShaderProgram("shaders/texture.vert", "shaders/texture.frag");
+        } catch (const std::runtime_error &e) {
+            std::cerr << "An error occured during construction of OpenGL shader lightingShader: " << e.what();
+            std::exit(EXIT_FAILURE);
+        }
+    }();
 
-    GLuint VBO, cubeVAO;
+    GLuint VBO, textureInfoVBO, cubeVAO;
     glGenBuffers(1, &VBO);
+    glGenBuffers(1, &textureInfoVBO);
     glGenVertexArrays(1, &cubeVAO);
+
+    glBindVertexArray(cubeVAO);
+
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    glBindVertexArray(cubeVAO);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, textureInfoVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(textureCoordinates), textureCoordinates, GL_STATIC_DRAW);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(1);
+
+    Texture2D containerTexture = Texture2D("textures/container.jpg");
+    textureShader.use();
+    textureShader.setUniform1i("ourTexture", 0);
 
     ViewMatrix viewMatrix;
     viewMatrix.registerWithGlfwWindow(window);
@@ -110,8 +175,10 @@ int main() {
     PerspectiveProjectionMatrix projectionMatrix(DEGREES_TO_RADIANS(45.0), wSize.width, wSize.height, 0.1, 100);
     OpenGlMatrix lightCubeModel;
     OpenGlMatrix cubeModel;
+    OpenGlMatrix textureCubeModel;
     lightCubeModel.setScale(0.2, 0.2, 0.2);
     lightCubeModel.setTranslate(1.2, 1.0, 2.0);
+    textureCubeModel.setTranslate(2.0, 0.0, 0.0);
     projectionMatrix.registerGlfwWindow(window);
 
     TextRenderer tRen = TextRenderer("serif", 0, 24);
@@ -122,7 +189,6 @@ int main() {
     const GLubyte *renderer = glGetString(GL_RENDERER);
 
     float lastTime = glfwGetTime();
-    //const Vector3 textColor = {0.5, 0.8, 0.2};
     while(!window.shouldClose()) {
         // Set the background
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
@@ -145,6 +211,16 @@ int main() {
         lightingShader.setUniformMatrix4v("model", 1, true, lightCubeModel.data());
         lightingShader.setUniformMatrix4v("view", 1, true, viewMatrix.data());
         lightingShader.setUniformMatrix4v("projection", 1, true, projectionMatrix.data());
+        glBindVertexArray(cubeVAO);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        // Draw the textured cube
+        textureShader.use();
+        textureShader.setUniformMatrix4v("model", 1, true, textureCubeModel.data());
+        textureShader.setUniformMatrix4v("view", 1, true, viewMatrix.data());
+        textureShader.setUniformMatrix4v("projection", 1, true, projectionMatrix.data());
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, containerTexture.getTextureId());
         glBindVertexArray(cubeVAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
@@ -179,6 +255,7 @@ int main() {
     }
     glDeleteVertexArrays(1, &cubeVAO);
     glDeleteBuffers(1, &VBO);
+    glDeleteBuffers(1, &textureInfoVBO);
     glfwTerminate();
     return 0;
 }

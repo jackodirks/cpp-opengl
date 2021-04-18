@@ -169,8 +169,12 @@ void ShaderProgram::setUniform3f(const std::string &name, const float v0, const 
     glUniform3f(getUniformLocation(name), v0, v1, v2);
 }
 
-
 void ShaderProgram::setUniform3f(const std::string &name, const Vector4 &vec) const
 {
     glUniform3f(getUniformLocation(name), vec[0], vec[1], vec[2]);
+}
+
+void ShaderProgram::setUniform1i(const std::string &name, const GLint v0) const
+{
+    glUniform1i(getUniformLocation(name), v0);
 }

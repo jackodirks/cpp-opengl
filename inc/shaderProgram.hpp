@@ -25,6 +25,7 @@ class ShaderProgram {
         void setUniformMatrix4v(const std::string &name, const size_t count, const bool transpose, const float* value) const;
         void setUniform3f(const std::string &name, const float v0, const float v1, const float v2) const;
         void setUniform3f(const std::string &name, const Vector4 &vec) const;
+        void setUniform1i(const std::string &name, const GLint v0) const;
 };
 
 #endif //SHADER_PROGRAM_HPP
